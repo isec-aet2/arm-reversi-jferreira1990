@@ -23,7 +23,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "stm32f769i_discovery.h"
+#include "stm32f769i_discovery_lcd.h"
+#include "stm32f769i_discovery_ts.h"
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,7 +66,7 @@ static void MX_DSIHOST_DSI_Init(void);
 static void MX_FMC_Init(void);
 static void MX_LTDC_Init(void);
 /* USER CODE BEGIN PFP */
-
+static void LCD_Config();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -111,6 +114,12 @@ int main(void)
   MX_FMC_Init();
   MX_LTDC_Init();
   /* USER CODE BEGIN 2 */
+     BSP_LED_Init(LED_RED);
+
+     LCD_Config();
+
+     BSP_TS_Init(800,480);   		//BSP_TS_Init(Size of screen X, Y)
+     BSP_TS_ITConfig(); 			//Config Interrupts do TouchScreen
 
   /* USER CODE END 2 */
 
@@ -483,7 +492,58 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+static void LCD_Config(void)
+{
+ int Xpos=320;
+ int Space=53;
+ int j=0;
 
+  uint32_t  lcd_status = LCD_OK;
+
+  /* Initialize the LCD */
+  lcd_status = BSP_LCD_Init();
+  while(lcd_status != LCD_OK);
+
+  BSP_LCD_LayerDefaultInit(0, LCD_FB_START_ADDRESS);
+
+  /* Clear the LCD */
+  BSP_LCD_Clear(LCD_COLOR_WHITE);
+
+  /* Set the Board  */
+  //Write grid numbers;
+      BSP_LCD_SetFont(&Font24);
+      BSP_LCD_DisplayStringAt(340, 20, (uint8_t *)"   1  2  3   4  5  6  7  8", LEFT_MODE);
+
+      BSP_LCD_DisplayStringAt(340, 20, (uint8_t *)"0", LEFT_MODE);
+      BSP_LCD_DisplayStringAt(340, 70, (uint8_t *)"1", LEFT_MODE);
+      BSP_LCD_DisplayStringAt(340, 125, (uint8_t *)"2", LEFT_MODE);
+      BSP_LCD_DisplayStringAt(340, 175, (uint8_t *)"3", LEFT_MODE);
+      BSP_LCD_DisplayStringAt(340, 230, (uint8_t *)"4", LEFT_MODE);
+      BSP_LCD_DisplayStringAt(340, 280, (uint8_t *)"5", LEFT_MODE);
+      BSP_LCD_DisplayStringAt(340, 335, (uint8_t *)"6", LEFT_MODE);
+      BSP_LCD_DisplayStringAt(340, 385, (uint8_t *)"7", LEFT_MODE);
+      BSP_LCD_DisplayStringAt(340, 435, (uint8_t *)"8", LEFT_MODE);
+
+  //Draw vertical lines
+  BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
+
+  j=0;
+  for(int i=0; i<9; i++){
+
+	  	  BSP_LCD_DrawVLine(Xpos+j, 0, 480 );
+	  	  j=j+Space;
+  }
+  //Draw horizontal lines
+    BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
+
+    j=0;
+    for(int i=0; i<9; i++){
+
+  	  	  BSP_LCD_DrawHLine(320, j, 480 );
+  	  	  j=j+Space;
+    }
+
+}
 /* USER CODE END 4 */
 
 /**
