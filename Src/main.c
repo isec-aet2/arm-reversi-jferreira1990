@@ -64,8 +64,17 @@ SDRAM_HandleTypeDef hsdram1;
 
 /* USER CODE BEGIN PV */
 
-int tsFlag=0;
 TS_StateTypeDef TS_State;
+
+uint32_t ConvertedValue;
+long int JTemp;
+char desc[100];
+
+int turn=0;
+uint16_t casaX=0;
+uint16_t casaY=0;
+uint16_t jogadaX=0;
+uint16_t jogadaY=0;
 
 /* USER CODE END PV */
 
@@ -87,15 +96,30 @@ static void LCD_Config();
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-uint32_t ConvertedValue;
-long int JTemp;
-char desc[100];
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
-int nextTurn=0;
-uint16_t casaX=0;
-uint16_t casaY=0;
-uint16_t jogadaX=0;
-uint16_t jogadaY=0;
+	if(GPIO_Pin == GPIO_PIN_13){
+
+		BSP_TS_GetState(&TS_State);
+
+		if(TS_State.touchDetected){
+
+		   if( (int)TS_State.touchX[0] <480 && (int)TS_State.touchY[0] <480  ){
+
+			   HAL_Delay(100);
+
+			   turn=1;
+
+				casaX = (int)TS_State.touchX[0]/60;
+			    casaY = (int)TS_State.touchY[0]/60;
+				 jogadaX = casaX*60+30;
+				 jogadaY = casaY*60+30;
+
+            }
+		 }
+
+	}
+}
 
 void  HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 
@@ -108,6 +132,7 @@ void  HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 			  	  		  JTemp = ((((ConvertedValue * VREF)/MAX_CONVERTED_VALUE) - VSENS_AT_AMBIENT_TEMP) * 10 / AVG_SLOPE) + AMBIENT_TEMP;
 			  	  		  /* Display the Temperature Value on the LCD */
 			  	  		  sprintf(desc, "T= %ld C", JTemp);
+			  	  		  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
 			  	  		  BSP_LCD_DisplayStringAt(650, 435, (uint8_t *)desc, LEFT_MODE);
 			  	  	  }
 
@@ -115,28 +140,7 @@ void  HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 
 }
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
-	if(GPIO_Pin == GPIO_PIN_13){
-
-		BSP_TS_GetState(&TS_State);
-
-		if(TS_State.touchDetected){
-
-			tsFlag=1;
-
-		}
-
-		/*
-		 if( TS_State.touchX[0] <480 && TS_State.touchY[0] <480  ){
-
-
-
-	   }
-	   */
-
-	}
-}
 /* USER CODE END 0 */
 
 /**
@@ -146,8 +150,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	int newPlayer=0;
 
-	char tsString[20];
+
+	//char tsString[20];
 
   /* USER CODE END 1 */
   
@@ -193,25 +199,36 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
+
+  /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if(tsFlag){
 
-	  	  tsFlag=0;
+	 // sprintf(tsString, "x = %d", (int)TS_State.touchX[0]);
+	 //BSP_LCD_DisplayStringAtLine(7, (uint8_t*)tsString);
+	 //sprintf(tsString, "Y = %d", (int)TS_State.touchY[0]);
+	 //BSP_LCD_DisplayStringAtLine(8, (uint8_t*)tsString);
 
-	  		  sprintf(tsString, "x = %d", (int)TS_State.touchX[0]);
-	  		  BSP_LCD_DisplayStringAtLine(7, (uint8_t*)tsString);
-	  		  sprintf(tsString, "Y = %d", (int)TS_State.touchY[0]);
-	  		  BSP_LCD_DisplayStringAtLine(8, (uint8_t*)tsString);
+	 if(turn==1){
+		 newPlayer++;
+		 turn=0;
 
-	  		  	  	  	  	  	  	  casaX=TS_State.touchX[0]/60;
-	  								  casaY=TS_State.touchY[0]/60;
-	  								  jogadaX=casaX*60+30;
-	  								  jogadaY=casaY*60+30;
 
-	  								  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+	 //Player1
 
+	  if(newPlayer%2 == 1){
+	  	 BSP_LCD_SetTextColor(LCD_COLOR_LIGHTGREEN);
+
+	    }
+
+	  //Player2
+
+	 else{
+	  	BSP_LCD_SetTextColor(LCD_COLOR_LIGHTRED);
+
+	   }
+
+	  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
 
 	 }
 
@@ -716,6 +733,15 @@ static void LCD_Config(void)
   	  	  BSP_LCD_DrawHLine(0, j, 480 );
   	  	  j=j+Space;
     }
+
+    /*Game menu*/
+    BSP_LCD_SetBackColor(LCD_COLOR_LIGHTBLUE);
+    BSP_LCD_SetTextColor(LCD_COLOR_LIGHTBLUE);
+    BSP_LCD_FillRect(480, 0, 320, 60);
+
+    BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+      BSP_LCD_SetFont(&Font24);
+      BSP_LCD_DisplayStringAt(580, 15, (uint8_t *)"REVERSI", LEFT_MODE);
 
 }
 /* USER CODE END 4 */
