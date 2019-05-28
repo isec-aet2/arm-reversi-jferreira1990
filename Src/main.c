@@ -257,7 +257,7 @@ int main(void)
 		  gameON=0;
 	  }
 
-/*Clock*/
+/*   Clock     */
 if(flagClock==1){
 		  flagClock=0;
 
@@ -275,7 +275,7 @@ if(flagClock==1){
 		  if(gameON ==1){
 			  downTimer--;
 			  sprintf(timerString, "Time Left: %2d s", downTimer);
-			  BSP_LCD_DisplayStringAt(500, 300, (uint8_t *)timerString, LEFT_MODE);
+			  BSP_LCD_DisplayStringAt(570, 300, (uint8_t *)timerString, LEFT_MODE);
 
 			  if (downTimer <= 0){
 			  	turnFlag=1;
@@ -310,7 +310,7 @@ if(turnFlag==1 && gameON ==1){         // &&  talvez devesse ser || e no startfl
 
 	  if(newPlayer%2 == 0){
 	  	 BSP_LCD_SetTextColor(colorP1);
-	  	 BSP_LCD_DisplayStringAt(580, 250, (uint8_t *)"PLAYER 1", LEFT_MODE);
+	  	 BSP_LCD_DisplayStringAt(590, 250, (uint8_t *)"PLAYER 1", LEFT_MODE);
 
 	  	 symbPlayer='x';
 	  	 symbAdv='o';
@@ -324,7 +324,7 @@ if(turnFlag==1 && gameON ==1){         // &&  talvez devesse ser || e no startfl
 	  	 }
 
 	  	 if(timOutP1 == 3){
-	  		BSP_LCD_DisplayStringAt(580, 120, (uint8_t *)"PLAYER 1 LOOSES" , LEFT_MODE);
+	  		BSP_LCD_DisplayStringAt(570, 120, (uint8_t *)"PLAYER 1 LOOSES" , LEFT_MODE);
 	  		gameON = 0;
 	  	 }
 
@@ -335,7 +335,7 @@ if(turnFlag==1 && gameON ==1){         // &&  talvez devesse ser || e no startfl
 
 	 else{
 	  	BSP_LCD_SetTextColor(colorP2);
-	  	 BSP_LCD_DisplayStringAt(580, 250, (uint8_t *)"PLAYER 2", LEFT_MODE);
+	  	 BSP_LCD_DisplayStringAt(590, 250, (uint8_t *)"PLAYER 2", LEFT_MODE);
 
 	  	symbPlayer='o';
 	    symbAdv='x';
@@ -349,7 +349,7 @@ if(turnFlag==1 && gameON ==1){         // &&  talvez devesse ser || e no startfl
 	    }
 
 	    if(timOutP2 == 3){
-	  		BSP_LCD_DisplayStringAt(580, 120, (uint8_t *)"PLAYER 2 LOOSES" , LEFT_MODE);
+	  		BSP_LCD_DisplayStringAt(570, 120, (uint8_t *)"PLAYER 2 LOOSES" , LEFT_MODE);
 	  		gameON = 0;
 	    }
 
@@ -955,7 +955,9 @@ static void LCD_Config(void)
     /*Game menu*/
     BSP_LCD_SetBackColor(LCD_COLOR_LIGHTBLUE);
     BSP_LCD_SetTextColor(LCD_COLOR_LIGHTBLUE);
-    BSP_LCD_FillRect(480, 0, 320, 60);
+    BSP_LCD_FillRect(490, 0, 300, 60);
+    BSP_LCD_DrawRect(490, 0, 300, 470);
+
 
     BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
       BSP_LCD_SetFont(&Font24);
@@ -964,13 +966,13 @@ static void LCD_Config(void)
 
       /*Start button*/
 
-      BSP_LCD_SetBackColor(LCD_COLOR_LIGHTBLUE);
-      BSP_LCD_SetTextColor(LCD_COLOR_LIGHTBLUE);
+      BSP_LCD_SetBackColor(LCD_COLOR_GREEN);
+      BSP_LCD_SetTextColor(LCD_COLOR_GREEN);
       BSP_LCD_FillRect(500, 180, 280, 50);
 
       BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
        BSP_LCD_SetFont(&Font24);
-       BSP_LCD_DisplayStringAt(580, 195, (uint8_t *)"START", LEFT_MODE);
+       BSP_LCD_DisplayStringAt(595, 195, (uint8_t *)"START", LEFT_MODE);
 
 
 }
