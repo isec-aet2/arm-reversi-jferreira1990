@@ -71,6 +71,7 @@ uint32_t ConvertedValue;
 long int JTemp;
 char desc[100];
 char clock[20];
+char timerString[20];
 
 int sec=0;
 int min=0;
@@ -78,6 +79,7 @@ int min=0;
 int turnFlag=0;
 int startFlag=0;
 int flagClock=0;
+int downTimer=20;
 
 char board[8][8]={"........",
                   "........",
@@ -190,6 +192,10 @@ int main(void)
 	uint32_t colorPlayer;
 	uint32_t colorAdv;
 
+	int timOutFlag=0;
+	int timOutP1=0;
+	int timOutP2=0;
+
 
 
 
@@ -257,6 +263,20 @@ if(flagClock==1){
 		  BSP_LCD_SetFont(&Font16);
 		  sprintf(clock, "Time: %2d:%2d", min,sec);
 		  BSP_LCD_DisplayStringAt(650, 400, (uint8_t *)clock, LEFT_MODE);
+
+		  //Temporizador de 20 seg
+		  if(gameON ==1){
+			  downTimer--;
+			  sprintf(timerString, "Time Left: %2d s", downTimer);
+			  BSP_LCD_DisplayStringAt(500, 300, (uint8_t *)timerString, LEFT_MODE);
+
+			  if (downTimer <= 0){
+			  	turnFlag=1;
+			  	timOutFlag=1;
+
+			  }
+		  }
+
 	  }
 
 
@@ -277,9 +297,9 @@ if(startFlag==1 ){
 if(turnFlag==1 && gameON ==1){
 
 		 turnFlag=0;
+		 newPlayer++;
 
-
-	 //Player1
+//Player1
 
 	  if(newPlayer%2 == 0){
 	  	 BSP_LCD_SetTextColor(colorP1);
@@ -289,9 +309,22 @@ if(turnFlag==1 && gameON ==1){
 	  	 symbAdv='o';
 	  	 colorPlayer=colorP1;
 	  	 colorAdv=colorP2;
+
+	  	 downTimer=20;
+	  	 if(timOutFlag == 1){
+	  		timOutFlag=0;
+	  		timOutP1++;
+	  	 }
+
+	  	 if(timOutP1 == 3){
+	  		BSP_LCD_DisplayStringAt(580, 120, (uint8_t *)"PLAYER 1 LOOSES" , LEFT_MODE);
+	  		gameON = 0;
+	  	 }
+
+
 	    }
 
-	  //Player2
+//Player2
 
 	 else{
 	  	BSP_LCD_SetTextColor(colorP2);
@@ -301,6 +334,18 @@ if(turnFlag==1 && gameON ==1){
 	    symbAdv='x';
 	    colorPlayer=colorP2;
 	    colorAdv=colorP1;
+
+	    downTimer=20;
+	    if(timOutFlag == 1){
+	       timOutFlag=0;
+    		timOutP2++;
+	    }
+
+	    if(timOutP2 == 3){
+	  		BSP_LCD_DisplayStringAt(580, 120, (uint8_t *)"PLAYER 2 LOOSES" , LEFT_MODE);
+	  		gameON = 0;
+	    }
+
 	   }
 
 	  casaX = (int)TS_State.touchX[0]/60;
@@ -356,11 +401,9 @@ if(turnFlag==1 && gameON ==1){
 			  			  }
 
 
-		  newPlayer++;   // o jogador so pode ser incrementado no fim
+	}
 
-	  }
-
-	 }
+}
 
 
 
