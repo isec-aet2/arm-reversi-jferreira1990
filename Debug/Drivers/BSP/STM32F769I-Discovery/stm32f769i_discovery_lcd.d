@@ -43,13 +43,13 @@ Drivers/BSP/STM32F769I-Discovery/stm32f769i_discovery_lcd.o: \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dsi.h \
  ../Drivers/BSP/STM32F769I-Discovery/stm32f769i_discovery.h \
- ../Drivers/BSP/STM32F769I-Discovery/../../../Utilities/Fonts/fonts.h \
- ../Drivers/BSP/STM32F769I-Discovery/../../../Utilities/Fonts/font24.c \
- ../Drivers/BSP/STM32F769I-Discovery/../../../Utilities/Fonts/fonts.h \
- ../Drivers/BSP/STM32F769I-Discovery/../../../Utilities/Fonts/font20.c \
- ../Drivers/BSP/STM32F769I-Discovery/../../../Utilities/Fonts/font16.c \
- ../Drivers/BSP/STM32F769I-Discovery/../../../Utilities/Fonts/font12.c \
- ../Drivers/BSP/STM32F769I-Discovery/../../../Utilities/Fonts/font8.c
+ c:\apostar_em_ti\arm-reversi-jferreira1990\utilities\fonts\fonts.h \
+ c:\apostar_em_ti\arm-reversi-jferreira1990\utilities\fonts\font24.c \
+ c:\apostar_em_ti\arm-reversi-jferreira1990\utilities\fonts\fonts.h \
+ c:\apostar_em_ti\arm-reversi-jferreira1990\utilities\fonts\font20.c \
+ c:\apostar_em_ti\arm-reversi-jferreira1990\utilities\fonts\font16.c \
+ c:\apostar_em_ti\arm-reversi-jferreira1990\utilities\fonts\font12.c \
+ c:\apostar_em_ti\arm-reversi-jferreira1990\utilities\fonts\font8.c
 
 ../Drivers/BSP/STM32F769I-Discovery/stm32f769i_discovery_lcd.h:
 
@@ -137,16 +137,16 @@ Drivers/BSP/STM32F769I-Discovery/stm32f769i_discovery_lcd.o: \
 
 ../Drivers/BSP/STM32F769I-Discovery/stm32f769i_discovery.h:
 
-../Drivers/BSP/STM32F769I-Discovery/../../../Utilities/Fonts/fonts.h:
+c:\apostar_em_ti\arm-reversi-jferreira1990\utilities\fonts\fonts.h:
 
-../Drivers/BSP/STM32F769I-Discovery/../../../Utilities/Fonts/font24.c:
+c:\apostar_em_ti\arm-reversi-jferreira1990\utilities\fonts\font24.c:
 
-../Drivers/BSP/STM32F769I-Discovery/../../../Utilities/Fonts/fonts.h:
+c:\apostar_em_ti\arm-reversi-jferreira1990\utilities\fonts\fonts.h:
 
-../Drivers/BSP/STM32F769I-Discovery/../../../Utilities/Fonts/font20.c:
+c:\apostar_em_ti\arm-reversi-jferreira1990\utilities\fonts\font20.c:
 
-../Drivers/BSP/STM32F769I-Discovery/../../../Utilities/Fonts/font16.c:
+c:\apostar_em_ti\arm-reversi-jferreira1990\utilities\fonts\font16.c:
 
-../Drivers/BSP/STM32F769I-Discovery/../../../Utilities/Fonts/font12.c:
+c:\apostar_em_ti\arm-reversi-jferreira1990\utilities\fonts\font12.c:
 
-../Drivers/BSP/STM32F769I-Discovery/../../../Utilities/Fonts/font8.c:
+c:\apostar_em_ti\arm-reversi-jferreira1990\utilities\fonts\font8.c:

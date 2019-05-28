@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=C:/Users/HP/STM32CubeIDE/workspace_1.0.0/ts-TEST/Inc
+HeaderPath=C:/Apostar_em_TI/arm-reversi-jferreira1990/Inc
 HeaderFiles=stm32f7xx_it.h;stm32f7xx_hal_conf.h;main.h;
-SourcePath=C:/Users/HP/STM32CubeIDE/workspace_1.0.0/ts-TEST/Src
+SourcePath=C:/Apostar_em_TI/arm-reversi-jferreira1990/Src
 SourceFiles=stm32f7xx_it.c;stm32f7xx_hal_msp.c;main.c;
 
 [PreviousLibFiles]

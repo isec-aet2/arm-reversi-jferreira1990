@@ -59,6 +59,7 @@ DSI_HandleTypeDef hdsi;
 LTDC_HandleTypeDef hltdc;
 
 TIM_HandleTypeDef htim6;
+TIM_HandleTypeDef htim7;
 
 SDRAM_HandleTypeDef hsdram1;
 
@@ -69,12 +70,26 @@ TS_StateTypeDef TS_State;
 uint32_t ConvertedValue;
 long int JTemp;
 char desc[100];
+char clock[20];
 
-int turn=0;
-uint16_t casaX=0;
-uint16_t casaY=0;
-uint16_t jogadaX=0;
-uint16_t jogadaY=0;
+int sec=0;
+int min=0;
+
+int turnFlag=0;
+int startFlag=0;
+int flagClock=0;
+
+char board[8][8]={"........",
+                  "........",
+                  "........",
+                  "...xo...",
+                  "...ox...",
+                  "........",
+                  "........",
+                  "........"};
+
+char symbPlayer;
+char symbAdv;
 
 /* USER CODE END PV */
 
@@ -87,9 +102,12 @@ static void MX_FMC_Init(void);
 static void MX_LTDC_Init(void);
 static void MX_TIM6_Init(void);
 static void MX_ADC1_Init(void);
+static void MX_TIM7_Init(void);
 /* USER CODE BEGIN PFP */
 
 static void LCD_Config();
+
+static void startGame();
 
 /* USER CODE END PFP */
 
@@ -108,22 +126,23 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
 			   HAL_Delay(100);
 
-			   turn=1;
-
-				casaX = (int)TS_State.touchX[0]/60;
-			    casaY = (int)TS_State.touchY[0]/60;
-				 jogadaX = casaX*60+30;
-				 jogadaY = casaY*60+30;
+			   turnFlag=1;
 
             }
-		 }
+
+		   if( (int)TS_State.touchX[0] >500 &&  (int)TS_State.touchX[0] <780 && (int)TS_State.touchY[0] >180 && (int)TS_State.touchY[0] < 230  ){
+
+			   startFlag=1;
+		   }
 
 	}
+  }
+
 }
 
 void  HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 
-	if(htim->Instance == TIM6){
+	if(htim->Instance == TIM6){           // 2 em 2 seg
 					HAL_StatusTypeDef status=HAL_ADC_PollForConversion(&hadc1,TEMP_REFRESH_PERIOD);
 			  	  	  if(status==HAL_OK)
 			  	  	  {
@@ -133,10 +152,18 @@ void  HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 			  	  		  /* Display the Temperature Value on the LCD */
 			  	  		  sprintf(desc, "T= %ld C", JTemp);
 			  	  		  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+			  	  	      BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
+			  	  	      BSP_LCD_SetFont(&Font16);
 			  	  		  BSP_LCD_DisplayStringAt(650, 435, (uint8_t *)desc, LEFT_MODE);
 			  	  	  }
 
 	}
+
+	if(htim->Instance == TIM7){
+		flagClock=1;
+
+		}
+
 
 }
 
@@ -151,9 +178,20 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	int newPlayer=0;
+	int gameON=0;
+
+	uint16_t casaX=0;
+	uint16_t casaY=0;
+	uint16_t jogadaX=0;
+	uint16_t jogadaY=0;
+
+	uint32_t colorP1 =  LCD_COLOR_LIGHTGREEN ;
+	uint32_t colorP2 =  LCD_COLOR_LIGHTRED ;
+	uint32_t colorPlayer;
+	uint32_t colorAdv;
 
 
-	//char tsString[20];
+
 
   /* USER CODE END 1 */
   
@@ -182,6 +220,7 @@ int main(void)
   MX_LTDC_Init();
   MX_TIM6_Init();
   MX_ADC1_Init();
+  MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
 
     LCD_Config();
@@ -192,6 +231,7 @@ int main(void)
     HAL_ADC_Start(&hadc1);     //start do adc
 
     HAL_TIM_Base_Start_IT(&htim6);
+    HAL_TIM_Base_Start_IT(&htim7);
 
   /* USER CODE END 2 */
 
@@ -200,35 +240,125 @@ int main(void)
   while (1)
   {
 
-  /* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 
-	 // sprintf(tsString, "x = %d", (int)TS_State.touchX[0]);
-	 //BSP_LCD_DisplayStringAtLine(7, (uint8_t*)tsString);
-	 //sprintf(tsString, "Y = %d", (int)TS_State.touchY[0]);
-	 //BSP_LCD_DisplayStringAtLine(8, (uint8_t*)tsString);
+    /*Clock*/
+if(flagClock==1){
+		  flagClock=0;
 
-	 if(turn==1){
-		 newPlayer++;
-		 turn=0;
+		  sec++;
+		  if(sec==60){
+			  sec=0;
+			  min++;
+		  }
+
+		  BSP_LCD_SetFont(&Font16);
+		  sprintf(clock, "Time: %2d:%2d", min,sec);
+		  BSP_LCD_DisplayStringAt(650, 400, (uint8_t *)clock, LEFT_MODE);
+	  }
+
+
+
+if(startFlag==1 ){
+	  startFlag=0;
+	  gameON=1;
+	  startGame();
+
+	  BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
+	  BSP_LCD_SetTextColor(colorP1);
+	  BSP_LCD_DisplayStringAt(580, 250, (uint8_t *)"PLAYER 0", LEFT_MODE);
+
+  }
+
+
+
+if(turnFlag==1 && gameON ==1){
+
+		 turnFlag=0;
 
 
 	 //Player1
 
-	  if(newPlayer%2 == 1){
-	  	 BSP_LCD_SetTextColor(LCD_COLOR_LIGHTGREEN);
+	  if(newPlayer%2 == 0){
+	  	 BSP_LCD_SetTextColor(colorP1);
+	  	 BSP_LCD_DisplayStringAt(580, 250, (uint8_t *)"PLAYER 1", LEFT_MODE);
 
+	  	 symbPlayer='x';
+	  	 symbAdv='o';
+	  	 colorPlayer=colorP1;
+	  	 colorAdv=colorP2;
 	    }
 
 	  //Player2
 
 	 else{
-	  	BSP_LCD_SetTextColor(LCD_COLOR_LIGHTRED);
+	  	BSP_LCD_SetTextColor(colorP2);
+	  	 BSP_LCD_DisplayStringAt(580, 250, (uint8_t *)"PLAYER 2", LEFT_MODE);
 
+	  	symbPlayer='o';
+	    symbAdv='x';
+	    colorPlayer=colorP2;
+	    colorAdv=colorP1;
 	   }
 
-	  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+	  casaX = (int)TS_State.touchX[0]/60;
+	  casaY = (int)TS_State.touchY[0]/60;
+	  jogadaX = casaX*60+30;
+	  jogadaY = casaY*60+30;
+
+	  //verificar q a casa está vazia
+	  if(board[casaY][casaX] == '.'  ){
+
+
+		  //verificar se existe peça adversaria na casa adjacente
+		  //verfica linha
+
+			  if( board[casaY+1][casaX]==symbAdv ){
+
+				  BSP_LCD_SetTextColor(colorPlayer);
+				  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+				  BSP_LCD_FillCircle(jogadaX,jogadaY+60 ,25);
+
+
+				  board[casaY][casaX]=symbPlayer;
+
+			  }
+			  if(board[casaY-1][casaX]==symbAdv ){
+
+			  				  BSP_LCD_SetTextColor(colorPlayer);
+			  				  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+			  				  BSP_LCD_FillCircle(jogadaX,jogadaY-60 ,25);
+
+
+			  				  board[casaY][casaX]=symbPlayer;
+
+			  			  }
+
+		  //verfica coluna
+
+			  if( board[casaY][casaX+1] == symbAdv ){
+
+				  BSP_LCD_SetTextColor(colorPlayer);
+				  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+				  BSP_LCD_FillCircle(jogadaX +60,jogadaY,25);
+
+				board[casaY][casaX]=symbPlayer;
+			  }
+			  if(  board[casaY][casaX-1]==symbAdv ){
+
+			  				  BSP_LCD_SetTextColor(colorPlayer);
+			  				  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+			  				  BSP_LCD_FillCircle(jogadaX -60,jogadaY,25);
+
+			  				board[casaY][casaX]=symbPlayer;
+			  			  }
+
+
+		  newPlayer++;   // o jogador so pode ser incrementado no fim
+
+	  }
 
 	 }
 
@@ -618,6 +748,44 @@ static void MX_TIM6_Init(void)
 
 }
 
+/**
+  * @brief TIM7 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM7_Init(void)
+{
+
+  /* USER CODE BEGIN TIM7_Init 0 */
+
+  /* USER CODE END TIM7_Init 0 */
+
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM7_Init 1 */
+
+  /* USER CODE END TIM7_Init 1 */
+  htim7.Instance = TIM7;
+  htim7.Init.Prescaler = 9999;
+  htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim7.Init.Period = 9999;
+  htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+  if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim7, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM7_Init 2 */
+
+  /* USER CODE END TIM7_Init 2 */
+
+}
+
 /* FMC initialization function */
 static void MX_FMC_Init(void)
 {
@@ -743,6 +911,57 @@ static void LCD_Config(void)
       BSP_LCD_SetFont(&Font24);
       BSP_LCD_DisplayStringAt(580, 15, (uint8_t *)"REVERSI", LEFT_MODE);
 
+
+      /*Start button*/
+
+      BSP_LCD_SetBackColor(LCD_COLOR_LIGHTBLUE);
+      BSP_LCD_SetTextColor(LCD_COLOR_LIGHTBLUE);
+      BSP_LCD_FillRect(500, 180, 280, 50);
+
+      BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+       BSP_LCD_SetFont(&Font24);
+       BSP_LCD_DisplayStringAt(580, 195, (uint8_t *)"START", LEFT_MODE);
+
+
+}
+
+static void startGame(){
+    int Xpos=0;
+    int Space=60;
+	int j=0;
+
+	BSP_LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
+	BSP_LCD_FillRect(0, 0, 480, 480);
+
+	/* Set the Board  */
+	   //Draw vertical lines
+	  BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
+
+	  j=0;
+	  for(int i=0; i<9; i++){
+
+		  	  BSP_LCD_DrawVLine(Xpos+j, 0, 480 );
+		  	  j=j+Space;
+	  }
+	  //Draw horizontal lines
+	    BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
+
+	    j=0;
+	    for(int i=0; i<9; i++){
+
+	  	  	  BSP_LCD_DrawHLine(0, j, 480 );
+	  	  	  j=j+Space;
+	    }
+
+	/*Draw initial symbols*/
+
+		 BSP_LCD_SetTextColor(LCD_COLOR_LIGHTRED);
+		 BSP_LCD_FillCircle(210,270,25);
+		 BSP_LCD_FillCircle(270,210,25);
+
+		  BSP_LCD_SetTextColor(LCD_COLOR_LIGHTGREEN);
+		  BSP_LCD_FillCircle(210,210,25);
+		  BSP_LCD_FillCircle(270,270,25);
 }
 /* USER CODE END 4 */
 
