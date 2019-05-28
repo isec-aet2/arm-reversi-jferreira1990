@@ -228,6 +228,8 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
+    BSP_LED_Init(LED_RED);
+    BSP_PB_Init(BUTTON_WAKEUP, BUTTON_MODE_GPIO);
 
     LCD_Config();
 
@@ -249,8 +251,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+/*  PUSH-BUTTON  */
+	  if(BSP_PB_GetState(BUTTON_WAKEUP)==1){
+		  LCD_Config();
+		  gameON=0;
+	  }
 
-    /*Clock*/
+/*Clock*/
 if(flagClock==1){
 		  flagClock=0;
 
@@ -294,7 +301,7 @@ if(startFlag==1 ){
 
 
 
-if(turnFlag==1 && gameON ==1){
+if(turnFlag==1 && gameON ==1){         // &&  talvez devesse ser || e no startflag ser a primeira jogada
 
 		 turnFlag=0;
 		 newPlayer++;
