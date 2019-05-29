@@ -20,6 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "fatfs.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -57,6 +58,8 @@ DMA2D_HandleTypeDef hdma2d;
 DSI_HandleTypeDef hdsi;
 
 LTDC_HandleTypeDef hltdc;
+
+SD_HandleTypeDef hsd2;
 
 TIM_HandleTypeDef htim6;
 TIM_HandleTypeDef htim7;
@@ -104,6 +107,7 @@ static void MX_FMC_Init(void);
 static void MX_LTDC_Init(void);
 static void MX_TIM6_Init(void);
 static void MX_ADC1_Init(void);
+static void MX_SDMMC2_SD_Init(void);
 static void MX_TIM7_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -193,7 +197,7 @@ int main(void)
 	uint32_t colorP1 =  LCD_COLOR_LIGHTGREEN ;
 	uint32_t colorP2 =  LCD_COLOR_LIGHTRED ;
 	uint32_t colorPlayer;
-	uint32_t colorAdv;
+	//uint32_t colorAdv;
 
 	int timOutFlag=0;
 	int timOutP1=0;
@@ -231,7 +235,9 @@ int main(void)
   MX_LTDC_Init();
   MX_TIM6_Init();
   MX_ADC1_Init();
+  MX_SDMMC2_SD_Init();
   MX_TIM7_Init();
+  MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
     BSP_LED_Init(LED_RED);
     BSP_PB_Init(BUTTON_WAKEUP, BUTTON_MODE_GPIO);
@@ -280,7 +286,7 @@ if(flagClock==1){
 		  if(gameON ==1){
 			  downTimer--;
 			  sprintf(timerString, "Time Left: %2d s", downTimer);
-			  BSP_LCD_DisplayStringAt(570, 300, (uint8_t *)timerString, LEFT_MODE);
+			  BSP_LCD_DisplayStringAt(550, 300, (uint8_t *)timerString, LEFT_MODE);
 
 			  if (downTimer <= 0){
 			  	turnFlag=1;
@@ -324,7 +330,7 @@ if(turnFlag==1 && gameON ==1){
 	  	 symbPlayer='x';
 	  	 symbAdv='o';
 	  	 colorPlayer=colorP1;
-	  	 colorAdv=colorP2;
+	  	 //colorAdv=colorP2;
 
 	  	 downTimer=20;
 	  	 if(timOutFlag == 1){
@@ -353,7 +359,7 @@ if(turnFlag==1 && gameON ==1){
 	  	symbPlayer='o';
 	    symbAdv='x';
 	    colorPlayer=colorP2;
-	    colorAdv=colorP1;
+	    //colorAdv=colorP1;
 
 	    downTimer=20;
 	    if(timOutFlag == 1){
@@ -526,7 +532,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLM = 25;
   RCC_OscInitStruct.PLL.PLLN = 400;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 4;
+  RCC_OscInitStruct.PLL.PLLQ = 8;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -550,13 +556,16 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC|RCC_PERIPHCLK_SDMMC2
+                              |RCC_PERIPHCLK_CLK48;
   PeriphClkInitStruct.PLLSAI.PLLSAIN = 192;
   PeriphClkInitStruct.PLLSAI.PLLSAIR = 2;
   PeriphClkInitStruct.PLLSAI.PLLSAIQ = 3;
   PeriphClkInitStruct.PLLSAI.PLLSAIP = RCC_PLLSAIP_DIV2;
   PeriphClkInitStruct.PLLSAIDivQ = 1;
   PeriphClkInitStruct.PLLSAIDivR = RCC_PLLSAIDIVR_2;
+  PeriphClkInitStruct.Clk48ClockSelection = RCC_CLK48SOURCE_PLL;
+  PeriphClkInitStruct.Sdmmc2ClockSelection = RCC_SDMMC2CLKSOURCE_CLK48;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -844,6 +853,34 @@ static void MX_LTDC_Init(void)
 }
 
 /**
+  * @brief SDMMC2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SDMMC2_SD_Init(void)
+{
+
+  /* USER CODE BEGIN SDMMC2_Init 0 */
+
+  /* USER CODE END SDMMC2_Init 0 */
+
+  /* USER CODE BEGIN SDMMC2_Init 1 */
+
+  /* USER CODE END SDMMC2_Init 1 */
+  hsd2.Instance = SDMMC2;
+  hsd2.Init.ClockEdge = SDMMC_CLOCK_EDGE_RISING;
+  hsd2.Init.ClockBypass = SDMMC_CLOCK_BYPASS_DISABLE;
+  hsd2.Init.ClockPowerSave = SDMMC_CLOCK_POWER_SAVE_DISABLE;
+  hsd2.Init.BusWide = SDMMC_BUS_WIDE_1B;
+  hsd2.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE;
+  hsd2.Init.ClockDiv = 0;
+  /* USER CODE BEGIN SDMMC2_Init 2 */
+
+  /* USER CODE END SDMMC2_Init 2 */
+
+}
+
+/**
   * @brief TIM6 Initialization Function
   * @param None
   * @retval None
@@ -978,8 +1015,8 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOG_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_GPIOG_CLK_ENABLE();
   __HAL_RCC_GPIOI_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
@@ -988,6 +1025,12 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin : PI13 */
   GPIO_InitStruct.Pin = GPIO_PIN_13;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOI, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PI15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_15;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOI, &GPIO_InitStruct);
 
@@ -1100,6 +1143,7 @@ static void startGame(){
 }
 
 void gameOver(){
+unsigned int nBytes;
 
 int cnt_x =0;
 int cnt_o=0;
@@ -1151,6 +1195,22 @@ char score_o[20];
               board[4][3]='o';
               board[4][4]='x';
 
+//Escreve p cartao SD
+
+if(f_mount(&SDFatFS,SDPath,0)!=FR_OK)
+       Error_Handler();
+
+if(f_open(&SDFile,"score.txt",FA_WRITE | FA_CREATE_ALWAYS)!=FR_OK)
+       Error_Handler();
+
+ if(f_write(&SDFile, score_x, strlen(score_x), &nBytes)!=FR_OK)
+    	Error_Handler();
+
+ if(f_write(&SDFile, score_o, strlen(score_o), &nBytes)!=FR_OK)
+    	Error_Handler();
+
+ f_close (&SDFile);
+
 }
 /* USER CODE END 4 */
 
@@ -1162,6 +1222,8 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
+
+ BSP_LED_On(LED_RED);
 
   /* USER CODE END Error_Handler_Debug */
 }
