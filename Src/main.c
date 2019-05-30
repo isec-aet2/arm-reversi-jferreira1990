@@ -102,7 +102,9 @@ char symbAdv;
 
 	int newPlayer=0;
 	int gameON=0;
+	int gameARMon=0;
 	int gameEnd=0;
+	int firstMove=0;
 
 	uint16_t casaX=0;
 	uint16_t casaY=0;
@@ -164,6 +166,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 			   HAL_Delay(100);
 
 			   turnFlag=1;
+
 
             }
 
@@ -297,60 +300,26 @@ int main(void)
 		  startARMSoft=0;
 	  }
 
-/*   Clock     */
-if(flagClock==1){
-		  flagClock=0;
 
-		  sec++;
-		  if(sec==60){
-			  sec=0;
-			  min++;
-		  }
-
-		  BSP_LCD_SetFont(&Font16);
-		  sprintf(clock, "Time: %2d:%2d", min,sec);
-		  BSP_LCD_DisplayStringAt(650, 400, (uint8_t *)clock, LEFT_MODE);
-
-		  //Temporizador de 20 seg
-		  if(gameON ==2){
-			  downTimer--;
-			  sprintf(timerString, "Time Left: %2d s", downTimer);
-			  BSP_LCD_DisplayStringAt(550, 300, (uint8_t *)timerString, LEFT_MODE);
-
-			  if (downTimer <= 0){
-			  	turnFlag=1;
-			  	timOutFlag=1;
-
-			  }
-		  }
-
-	  }
 
 
 /*    Play game against Human     */
 if(startFlag==1 ){
 	  startFlag=0;
+
 	  gameON=1;
 	  startGame();
-/*
-	  BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
-	  BSP_LCD_SetTextColor(colorP1);
-	  BSP_LCD_DisplayStringAt(590, 250, (uint8_t *)"PLAYER 0", LEFT_MODE);
-*/
+
+	 // firstMove=1;
+
 }
 
-if(turnFlag==1 || gameON ==1){
-
-	     gameON=2; //p n entrar de novo nesta funçao sem ser pelo toque
-
-
-
+//if( (turnFlag==1 && gameON ==1) || firstMove==1){
+if (gameON==1){
 
 //Player1
 
 	  if(newPlayer%2 == 0){
-
-		  //newPlayer++;
 
 	  	 BSP_LCD_SetTextColor(colorP1);
 	  	 BSP_LCD_DisplayStringAt(590, 250, (uint8_t *)"PLAYER 1", LEFT_MODE);
@@ -360,7 +329,10 @@ if(turnFlag==1 || gameON ==1){
 	  	 colorPlayer=colorP1;
 	  	 //colorAdv=colorP2;
 
-	  	 downTimer=20;
+	  	 if(turnFlag==1){
+	  		 downTimer=20;
+	  	 }
+
 	  	 if(timOutFlag == 1){
 	  		timOutFlag=0;
 	  		timOutP1++;
@@ -389,7 +361,10 @@ if(turnFlag==1 || gameON ==1){
 	    colorPlayer=colorP2;
 	    //colorAdv=colorP1;
 
-	    downTimer=20;
+	    if(turnFlag==1){
+	    	downTimer=20;
+	    }
+
 	    if(timOutFlag == 1){
 	       timOutFlag=0;
     		timOutP2++;
@@ -404,6 +379,9 @@ if(turnFlag==1 || gameON ==1){
 	   }
 
 //----colocar as peças-------------------------------------------------------------------------------------
+
+
+
 
 	  casaX = (int)TS_State.touchX[0]/60;
 	  casaY = (int)TS_State.touchY[0]/60;
@@ -523,14 +501,24 @@ if(turnFlag==1 || gameON ==1){
 
 	}
 
-	  turnFlag=0;
-	  newPlayer++;
+	  if(turnFlag==1){
+	  		turnFlag=0;
+	  	   newPlayer++;
+	  	}
+
 }
 
 /* Play against ARM   */
 if(startARMFlag==1){
+	startARMFlag=0;
+
 	 startGame();
-	 playARM();
+	 gameARMon=1;
+
+}
+
+if(turnFlag==1 && gameARMon ==1){
+	playARM();
 
 }
 
@@ -544,6 +532,35 @@ if(gameEnd==1){
 
 }
 
+/*   Clock     */
+if(flagClock==1){
+		  flagClock=0;
+
+		  sec++;
+		  if(sec==60){
+			  sec=0;
+			  min++;
+		  }
+
+		  BSP_LCD_SetFont(&Font16);
+		  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+		  sprintf(clock, "Time: %2d:%2d", min,sec);
+		  BSP_LCD_DisplayStringAt(650, 400, (uint8_t *)clock, LEFT_MODE);
+
+		  //Temporizador de 20 seg
+		  if(gameON ==1 || gameARMon ==1){
+			  downTimer--;
+			  sprintf(timerString, "Time Left: %2d s", downTimer);
+			  BSP_LCD_DisplayStringAt(550, 300, (uint8_t *)timerString, LEFT_MODE);
+
+			  if (downTimer <= 0){
+			  	turnFlag=1;
+			  	timOutFlag=1;
+
+			  }
+		  }
+
+	  }
 
 
   }
@@ -1300,17 +1317,14 @@ if(turnFlag==1 || startARMFlag ==1){
 		  	jogadaX = casaX*60+30;
 		  	 jogadaY = casaY*60+30;
 
-
-
 		    }
 
 	//Player2
 
 		 else{
 
-
 		  	BSP_LCD_SetTextColor(colorP2);
-		  	 BSP_LCD_DisplayStringAt(590, 250, (uint8_t *)"ARM", LEFT_MODE);
+		  	 BSP_LCD_DisplayStringAt(590, 250, (uint8_t *)"   ARM   ", LEFT_MODE);
 
 		  	symbPlayer='o';
 		    symbAdv='x';
