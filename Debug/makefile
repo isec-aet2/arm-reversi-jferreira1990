@@ -40,21 +40,21 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-PROJECT.elf \
+Project-SD.elf \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-PROJECT.list \
+Project-SD.list \
 
 
 # All Target
-all: PROJECT.elf secondary-outputs
+all: Project-SD.elf secondary-outputs
 
 # Tool invocations
-PROJECT.elf: $(OBJS) $(USER_OBJS) C:\Apostar_em_TI\arm-reversi-jferreira1990\STM32F769NIHX_FLASH.ld
-	arm-none-eabi-gcc -o "PROJECT.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Apostar_em_TI\arm-reversi-jferreira1990\STM32F769NIHX_FLASH.ld" --specs=nosys.specs -Wl,-Map="PROJECT.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Project-SD.elf: $(OBJS) $(USER_OBJS) C:\Apostar_em_TI\arm-reversi-jferreira1990\STM32F769NIHX_FLASH.ld
+	arm-none-eabi-gcc -o "Project-SD.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Apostar_em_TI\arm-reversi-jferreira1990\STM32F769NIHX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Project-SD.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -63,8 +63,8 @@ default.size.stdout: $(EXECUTABLES)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-PROJECT.list: $(EXECUTABLES)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "PROJECT.list"
+Project-SD.list: $(EXECUTABLES)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Project-SD.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 

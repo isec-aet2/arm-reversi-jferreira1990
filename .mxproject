@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=C:/Apostar_em_TI/arm-reversi-jferreira1990/Inc
+HeaderPath=C:/Users/HP/STM32CubeIDE/workspace_1.0.0/Project-SD/Inc
 HeaderFiles=stm32f7xx_it.h;stm32f7xx_hal_conf.h;main.h;ffconf.h;bsp_driver_sd.h;sd_diskio.h;fatfs.h;fatfs_platform.h;
-SourcePath=C:/Apostar_em_TI/arm-reversi-jferreira1990/Src
+SourcePath=C:/Users/HP/STM32CubeIDE/workspace_1.0.0/Project-SD/Src
 SourceFiles=stm32f7xx_it.c;stm32f7xx_hal_msp.c;main.c;bsp_driver_sd.c;sd_diskio.c;fatfs.c;fatfs_platform.c;
 
 [PreviousLibFiles]
