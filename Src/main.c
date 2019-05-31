@@ -70,8 +70,8 @@ SDRAM_HandleTypeDef hsdram1;
 
 /* USER CODE BEGIN PV */
 
+ int flagTemp=0;
 TS_StateTypeDef TS_State;
-
 uint32_t ConvertedValue;
 long int JTemp;
 char desc[100];
@@ -79,6 +79,7 @@ char clockTime[20];
 char timerString[20];
 char timeOutString[20];
 
+int flagTouchScreen=0;
 int startSoft=0;
 int startARMSoft=0;
 
@@ -160,79 +161,27 @@ void jogadasPossiveis(char symbPlayer, char symbAdv);
 /* USER CODE BEGIN 0 */
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-
-
-
 	if(GPIO_Pin == GPIO_PIN_13){
 
 		BSP_TS_GetState(&TS_State);
 
 		if(TS_State.touchDetected){
 
-		   if( (int)TS_State.touchX[0] <480 && (int)TS_State.touchY[0] <480  ){
+			HAL_Delay(100);
 
-			   HAL_Delay(100);
-
-			   turnFlag=1;
-
-
-            }
-
-		   if( (int)TS_State.touchX[0] >500 &&  (int)TS_State.touchX[0] <780 && (int)TS_State.touchY[0] >180 && (int)TS_State.touchY[0] < 230  ){
-
-			   if(startSoft==0  && startARMSoft==0){
-				   startFlag=1;
-				   startSoft++;
-
-				   BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
-				   BSP_LCD_DrawRect(500, 180, 280, 50);
-			   }
-
-
-		   }
-
-		   if( (int)TS_State.touchX[0] >500 &&  (int)TS_State.touchX[0] <780 && (int)TS_State.touchY[0] >100 && (int)TS_State.touchY[0] < 150  ){
-
-		   			   if(startSoft==0  && startARMSoft==0){
-		   				   startARMFlag=1;
-		   				    startARMSoft++;
-
-		   				BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
-		   				BSP_LCD_DrawRect(500, 100, 280, 50);
-
-		   			   }
-        		   }
-
-	}
-  }
-
+			flagTouchScreen=1;
+	     }
+    }
 }
 
 void  HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
-
 	if(htim->Instance == TIM6){           // 2 em 2 seg
-					HAL_StatusTypeDef status=HAL_ADC_PollForConversion(&hadc1,TEMP_REFRESH_PERIOD);
-			  	  	  if(status==HAL_OK)
-			  	  	  {
-			  	  		  ConvertedValue=HAL_ADC_GetValue(&hadc1); //get value
-
-			  	  		  JTemp = ((((ConvertedValue * VREF)/MAX_CONVERTED_VALUE) - VSENS_AT_AMBIENT_TEMP) * 10 / AVG_SLOPE) + AMBIENT_TEMP;
-			  	  		  /* Display the Temperature Value on the LCD */
-			  	  		  sprintf(desc, "T= %ld C", JTemp);
-			  	  		  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
-			  	  	      BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
-			  	  	      BSP_LCD_SetFont(&Font16);
-			  	  		  BSP_LCD_DisplayStringAt(650, 435, (uint8_t *)desc, LEFT_MODE);
-			  	  	  }
-
+		flagTemp=1;
 	}
 
-	if(htim->Instance == TIM7){
+	if(htim->Instance == TIM7){            //1 em 1 seg
 		flagClock=1;
-
-		}
-
-
+	}
 }
 
 
@@ -300,6 +249,64 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+/* Temperature Sensor */
+	  if (flagTemp==1){
+		  flagTemp=0;
+
+		  HAL_StatusTypeDef status=HAL_ADC_PollForConversion(&hadc1,TEMP_REFRESH_PERIOD);
+
+		 	  if(status==HAL_OK)
+		 	  {
+		 		  ConvertedValue=HAL_ADC_GetValue(&hadc1); //get value
+
+		 		  JTemp = ((((ConvertedValue * VREF)/MAX_CONVERTED_VALUE) - VSENS_AT_AMBIENT_TEMP) * 10 / AVG_SLOPE) + AMBIENT_TEMP;
+		 		  /* Display the Temperature Value on the LCD */
+		 		  sprintf(desc, "T= %ld C", JTemp);
+		 		  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+		 		  BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
+		 		  BSP_LCD_SetFont(&Font16);
+		 		  BSP_LCD_DisplayStringAt(650, 435, (uint8_t *)desc, LEFT_MODE);
+		 	  }
+	  }
+
+/*Touch Screen*/
+
+ if (flagTouchScreen==1){
+	 flagTouchScreen=0;
+
+	 if( (int)TS_State.touchX[0] <480 && (int)TS_State.touchY[0] <480  ){
+
+		   turnFlag=1;
+	}
+
+	   if( (int)TS_State.touchX[0] >500 &&  (int)TS_State.touchX[0] <780 && (int)TS_State.touchY[0] >180 && (int)TS_State.touchY[0] < 230  ){
+
+		   if(startSoft==0  && startARMSoft==0){
+			   startFlag=1;
+			   startSoft++;
+
+			   BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
+			   BSP_LCD_DrawRect(500, 180, 280, 50);
+			  }
+	   }
+
+	   if( (int)TS_State.touchX[0] >500 &&  (int)TS_State.touchX[0] <780 && (int)TS_State.touchY[0] >100 && (int)TS_State.touchY[0] < 150  ){
+
+				   if(startSoft==0  && startARMSoft==0){
+					   startARMFlag=1;
+						startARMSoft++;
+
+					BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);
+					BSP_LCD_DrawRect(500, 100, 280, 50);
+
+				   }
+	   }
+
+ }
+
+
+
 /*  PUSH-BUTTON  */
 	  if(BSP_PB_GetState(BUTTON_WAKEUP)==1){
 		  LCD_Config();
