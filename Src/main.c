@@ -125,8 +125,8 @@ char symbAdv;
 
 	int j=0;
 
-	int JogPossiveisX[20]={0};
-	int JogPossiveisY[20]={0};
+	int jogPossiveisX[20]={0};
+	int jogPossiveisY[20]={0};
 	int indx=0;
 
 /* USER CODE END PV */
@@ -372,15 +372,12 @@ if (gameON==1){
 
 	 else{
 
-		 //newPlayer++;
-
 	  	BSP_LCD_SetTextColor(colorP2);
 	  	 BSP_LCD_DisplayStringAt(590, 250, (uint8_t *)"PLAYER 2", LEFT_MODE);
 
 	  	symbPlayer='o';
 	    symbAdv='x';
 	    colorPlayer=colorP2;
-	    //colorAdv=colorP1;
 
 	    if(turnFlag==1){
 	    	downTimer=20;
@@ -396,15 +393,24 @@ if (gameON==1){
 
 	    if(timOutP2 == 3){
 	  		gameON = 0;
-	  		gameEnd=1;
+	  		gameEnd = 1;
 	    }
 
 	   }
 
+//------verificar se ha jogadas possiveis------------------------------------------------------------------
+
+	  jogadasPossiveis(symbPlayer, symbAdv);
+
+	  /*se n houver jogadas possiveis a segunda posiçao da matriz (jogPosssiveis[1]) vai estar igual a zero*/
+	  /*e preciso verificar a segunda posiçao e nao a primeira pq (0,0) e uma jogada possivel              */
+
+	  if( jogPossiveisX[1]==jogPossiveisY[1]  && jogPossiveisX[1]==0  ){
+		  gameON = 0;
+		  gameEnd = 1;
+	  }
+
 //----colocar as peças-------------------------------------------------------------------------------------
-
-
-
 
 	  casaX = (int)TS_State.touchX[0]/60;
 	  casaY = (int)TS_State.touchY[0]/60;
@@ -1402,8 +1408,8 @@ void playARM(){
 
 		    int random_number = rand() %20;
 
-		    casaX = JogPossiveisX[random_number];
-		    casaY = JogPossiveisY[random_number];
+		    casaX = jogPossiveisX[random_number];
+		    casaY = jogPossiveisY[random_number];
 
 		    //----colocar as peças-------------------------------------------------------------------------------------
 
@@ -1434,7 +1440,8 @@ void jogadasPossiveis(char symbPlayer, char symbAdv){
 
 	//reinicia as matrizes de jogadas possiveis
 	for(int i=0; i<=20; i++){
-		JogPossiveisX[i]=JogPossiveisY[i]=0;
+		jogPossiveisX[i]=0;
+		jogPossiveisX[i]=jogPossiveisY[i];
 	}
 
 	for(casaX=0; casaX<=7; casaX++){
@@ -1444,34 +1451,33 @@ void jogadasPossiveis(char symbPlayer, char symbAdv){
 				//verificar q a casa está vazia
 				if(board[casaY][casaX] == '.'  ){
 
+						//verificar se existe peça adversaria na casa adjacente
+						//verifica linha-----------------------------------------------------------------------------
 
-				//verificar se existe peça adversaria na casa adjacente
-			    //verifica linha-----------------------------------------------------------------------------
+						 if( board[casaY+1][casaX]==symbAdv ){
+							 jogPossiveisX[indx]=casaX;
+							 jogPossiveisY[indx]=casaY;
+							 indx++;
+						}
+						else if(board[casaY-1][casaX]==symbAdv ){
 
-				 if( board[casaY+1][casaX]==symbAdv ){
-					 JogPossiveisX[indx]=casaX;
-					 JogPossiveisY[indx]=casaY;
-				  	 indx++;
-			    }
-				else if(board[casaY-1][casaX]==symbAdv ){
+							  jogPossiveisX[indx]=casaX;
+							  jogPossiveisY[indx]=casaY;
+							  indx++;
+						}
 
-					  JogPossiveisX[indx]=casaX;
-					  JogPossiveisY[indx]=casaY;
-					  indx++;
-				}
+					//verfica coluna-----------------------------------------------------------------------
 
-			//verfica coluna-----------------------------------------------------------------------
-
-				if( board[casaY][casaX+1] == symbAdv ){
-					  JogPossiveisX[indx]=casaX;
-					  JogPossiveisY[indx]=casaY;
-				    	 indx++;
-				 }
-				else if(  board[casaY][casaX-1]==symbAdv ){
-					JogPossiveisX[indx]=casaX;
-			    	JogPossiveisY[indx]=casaY;
-		          	indx++;
-				}
+						if( board[casaY][casaX+1] == symbAdv ){
+							  jogPossiveisX[indx]=casaX;
+							  jogPossiveisY[indx]=casaY;
+								 indx++;
+						 }
+						else if(  board[casaY][casaX-1]==symbAdv ){
+							jogPossiveisX[indx]=casaX;
+							jogPossiveisY[indx]=casaY;
+							indx++;
+						}
 
 			}
 		}
