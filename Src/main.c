@@ -155,6 +155,8 @@ void playARM();
 
 void jogadasPossiveis(char symbPlayer, char symbAdv);
 
+void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int casaY);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -275,6 +277,37 @@ int main(void)
 		 		  BSP_LCD_DisplayStringAt(650, 435, (uint8_t *)desc, LEFT_MODE);
 		 	  }
 	  }
+
+/*   Clock     */
+if(flagClock==1){
+	  flagClock=0;
+
+	  sec++;
+	  if(sec==60){
+		  sec=0;
+		  min++;
+	  }
+
+	  BSP_LCD_SetFont(&Font16);
+	  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+	  sprintf(clockTime, "Time: %2d:%2d", min,sec);
+	  BSP_LCD_DisplayStringAt(650, 400, (uint8_t *)clockTime, LEFT_MODE);
+
+	  //Temporizador de 20 seg
+	  if(gameON ==1 || gameARMon ==1){
+		  downTimer--;
+		  sprintf(timerString, "Time Left: %2d s", downTimer);
+		  BSP_LCD_DisplayStringAt(550, 300, (uint8_t *)timerString, LEFT_MODE);
+
+		  if (downTimer <= 0){
+			turnFlag=1;
+			timOutFlag=1;
+
+		  }
+	  }
+
+}
+
 
 /*Touch Screen*/
 
@@ -427,112 +460,10 @@ if (gameON==1){
 
 	  casaX = (int)TS_State.touchX[0]/60;
 	  casaY = (int)TS_State.touchY[0]/60;
-	  jogadaX = casaX*60+30;
-	  jogadaY = casaY*60+30;
 
-	  BSP_LCD_SetTextColor(colorPlayer);
+	  jogada(symbPlayer, symbAdv, colorPlayer, casaX, casaY);
 
-	  //verificar q a casa está vazia
-	  if(board[casaY][casaX] == '.'  ){
-
-
-		  //verificar se existe peça adversaria na casa adjacente
-		  //verfica linha-----------------------------------------------------------------------------
-
-			  if( board[casaY+1][casaX]==symbAdv ){
-
-
-				  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
-
-				  board[casaY][casaX]=symbPlayer;
-
-				  //troca as peças
-				  for (int i = casaY ; i<8 ; i++){
-				  	 if( board [i][casaX] == symbPlayer){
-				  		  j=i;
-				  		  for(int i = casaY; i<=j; i++){
-				  			 board[i][casaX]= symbPlayer;
-
-				  			  BSP_LCD_FillCircle(jogadaX,  (i*60+30)  ,25);
-				  			  }
-				  		  }
-				  }
-
-
-
-			  }
-			  else if(board[casaY-1][casaX]==symbAdv ){
-
-			  				  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
-
-			  				  board[casaY][casaX]=symbPlayer;
-
-			  				 //troca as peças
-			  				for (int i = casaY ; i>0 ; i--){
-			  				      if( board [i][casaX] == symbPlayer){
-			  						  j=i;
-			  						 for(int i = casaY; i>=j; i--){
-			  						  board[i][casaX]= symbPlayer;
-
-			  						  BSP_LCD_FillCircle(jogadaX,  (i*60+30)  ,25);
-
-			  						  }
-			  					  }
-			  				 }
-
-
-			  }
-
-		  //verfica coluna-----------------------------------------------------------------------
-
-			  if( board[casaY][casaX+1] == symbAdv ){
-
-				  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
-
-				board[casaY][casaX]=symbPlayer;
-
-				  //troca as peças
-				 for (int i = casaX ; i<8 ; i++){
-					 if( board [casaY][i] == symbPlayer){
-					  j=i;
-					  for(int i = casaX; i<=j; i++){
-						 board[casaY][i]= symbPlayer;
-
-						BSP_LCD_FillCircle((i*60+30),  jogadaY  ,25);
-						}
-					  }
-		        }
-
-
-
-			  }
-			  else if(  board[casaY][casaX-1]==symbAdv ){
-
-			  				 BSP_LCD_FillCircle(jogadaX,jogadaY,25);
-
-			  				board[casaY][casaX]=symbPlayer;
-
-			  				//troca as peças
-			  				for (int i = casaX ; i>0 ; i--){
-			  				    if( board [casaY][i] == symbPlayer){
-			  					 j=i;
-			  					 for(int i = casaX; i>=j; i--){
-			  						 board[casaY][i]= symbPlayer;
-
-			  					      BSP_LCD_FillCircle((i*60+30),  jogadaY  ,25);
-
-			  						 }
-			  					 }
-			  				 }
-
-
-
-				  }
-
-
-
-	}
-
+//----mudar a vez-------------------------------------------------------------------------------------------
 	  if(turnFlag==1){
 	  		turnFlag=0;
 	  	   newPlayer++;
@@ -562,38 +493,7 @@ if(gameEnd==1){
 
 	gameOver();
 
-}
-
-/*   Clock     */
-if(flagClock==1){
-		  flagClock=0;
-
-		  sec++;
-		  if(sec==60){
-			  sec=0;
-			  min++;
-		  }
-
-		  BSP_LCD_SetFont(&Font16);
-		  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
-		  sprintf(clockTime, "Time: %2d:%2d", min,sec);
-		  BSP_LCD_DisplayStringAt(650, 400, (uint8_t *)clockTime, LEFT_MODE);
-
-		  //Temporizador de 20 seg
-		  if(gameON ==1 || gameARMon ==1){
-			  downTimer--;
-			  sprintf(timerString, "Time Left: %2d s", downTimer);
-			  BSP_LCD_DisplayStringAt(550, 300, (uint8_t *)timerString, LEFT_MODE);
-
-			  if (downTimer <= 0){
-			  	turnFlag=1;
-			  	timOutFlag=1;
-
-			  }
-		  }
-
-	  }
-
+ }
 
   }
   /* USER CODE END 3 */
@@ -1235,7 +1135,7 @@ static void startGame(){
 
     /*Draw window for communication */
 		  BSP_LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
-		  BSP_LCD_FillRect(500, 280, 281, 180);
+		  BSP_LCD_FillRect(500, 280, 281, 100);
 
 
 }
@@ -1364,27 +1264,11 @@ void playARM(){
 		  	 casaX = (int)TS_State.touchX[0]/60;
 		  	 casaY = (int)TS_State.touchY[0]/60;
 
-		  	BSP_LCD_SetTextColor(colorPlayer);
-
-		  	jogadaX = casaX*60+30;
-		  	jogadaY = casaY*60+30;
-
-		  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
-
-		 board[casaY][casaX]=symbPlayer;
-
-		 /*
-		  	jogadasPossiveis(symbPlayer, symbAdv);
-
-		  	 //verificar se a jogada e possivel
-		  	*/
-
-
-
+		  	jogada(symbPlayer, symbAdv, colorPlayer, casaX, casaY);
 		  }
 
 
-//Player2
+//Player ARM
 
 		 else{
 
@@ -1424,16 +1308,7 @@ void playARM(){
 		    casaX = jogPossiveisX[random_number];
 		    casaY = jogPossiveisY[random_number];
 
-		    //----colocar as peças-------------------------------------------------------------------------------------
-
-		    		 BSP_LCD_SetTextColor(colorPlayer);
-
-		    		 jogadaX = casaX*60+30;
-		    		 jogadaY = casaY*60+30;
-
-		    		 BSP_LCD_FillCircle(jogadaX,jogadaY,25);
-
-		    		board[casaY][casaX]=symbPlayer;
+		    jogada(symbPlayer, symbAdv, colorPlayer, casaX, casaY);
 
 	 }
 
@@ -1495,6 +1370,116 @@ void jogadasPossiveis(char symbPlayer, char symbAdv){
 			}
 		}
 	   }
+
+}
+
+void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int casaY){
+
+	  	  jogadaX = casaX*60+30;
+		  jogadaY = casaY*60+30;
+
+		  BSP_LCD_SetTextColor(colorPlayer);
+
+		  //verificar q a casa está vazia
+		  if(board[casaY][casaX] == '.'  ){
+
+
+			  //verificar se existe peça adversaria na casa adjacente
+			  //verfica linha-----------------------------------------------------------------------------
+
+				  if( board[casaY+1][casaX]==symbAdv ){
+
+
+					  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+
+					  board[casaY][casaX]=symbPlayer;
+
+					  //troca as peças
+					  for (int i = casaY ; i<8 ; i++){
+					  	 if( board [i][casaX] == symbPlayer){
+					  		  j=i;
+					  		  for(int i = casaY; i<=j; i++){
+					  			 board[i][casaX]= symbPlayer;
+
+					  			  BSP_LCD_FillCircle(jogadaX,  (i*60+30)  ,25);
+					  			  }
+					  		  }
+					  }
+
+
+
+				  }
+				  else if(board[casaY-1][casaX]==symbAdv ){
+
+				  				  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+
+				  				  board[casaY][casaX]=symbPlayer;
+
+				  				 //troca as peças
+				  				for (int i = casaY ; i>0 ; i--){
+				  				      if( board [i][casaX] == symbPlayer){
+				  						  j=i;
+				  						 for(int i = casaY; i>=j; i--){
+				  						  board[i][casaX]= symbPlayer;
+
+				  						  BSP_LCD_FillCircle(jogadaX,  (i*60+30)  ,25);
+
+				  						  }
+				  					  }
+				  				 }
+
+
+				  }
+
+			  //verfica coluna-----------------------------------------------------------------------
+
+				  if( board[casaY][casaX+1] == symbAdv ){
+
+					  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+
+					board[casaY][casaX]=symbPlayer;
+
+					  //troca as peças
+					 for (int i = casaX ; i<8 ; i++){
+						 if( board [casaY][i] == symbPlayer){
+						  j=i;
+						  for(int i = casaX; i<=j; i++){
+							 board[casaY][i]= symbPlayer;
+
+							BSP_LCD_FillCircle((i*60+30),  jogadaY  ,25);
+							}
+						  }
+			        }
+
+
+
+				  }
+				  else if(  board[casaY][casaX-1]==symbAdv ){
+
+				  				 BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+
+				  				board[casaY][casaX]=symbPlayer;
+
+				  				//troca as peças
+				  				for (int i = casaX ; i>0 ; i--){
+				  				    if( board [casaY][i] == symbPlayer){
+				  					 j=i;
+				  					 for(int i = casaX; i>=j; i--){
+				  						 board[casaY][i]= symbPlayer;
+
+				  					      BSP_LCD_FillCircle((i*60+30),  jogadaY  ,25);
+
+				  						 }
+				  					 }
+				  				 }
+
+
+
+					  }
+
+
+
+		}
 
 }
 
