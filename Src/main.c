@@ -177,13 +177,15 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 }
 
 void  HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
+	if(htim->Instance == TIM7){            //1 em 1 seg
+			flagClock=1;
+		}
+
 	if(htim->Instance == TIM6){           // 2 em 2 seg
 		flagTemp=1;
 	}
 
-	if(htim->Instance == TIM7){            //1 em 1 seg
-		flagClock=1;
-	}
+
 }
 
 
@@ -259,6 +261,36 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
+/*   Clock     */
+if(flagClock==1){
+  flagClock=0;
+
+  sec++;
+  if(sec==60){
+	  sec=0;
+	  min++;
+  }
+
+  BSP_LCD_SetFont(&Font16);
+  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+  sprintf(clockTime, "Time: %2d:%2d", min,sec);
+  BSP_LCD_DisplayStringAt(650, 400, (uint8_t *)clockTime, LEFT_MODE);
+
+  //Temporizador de 20 seg
+  if(gameON ==1 || gameARMon ==1){
+	  downTimer--;
+	  sprintf(timerString, "Time Left: %2d s", downTimer);
+	  BSP_LCD_DisplayStringAt(550, 300, (uint8_t *)timerString, LEFT_MODE);
+
+	  if (downTimer <= 0){
+		turnFlag=1;
+		timOutFlag=1;
+
+	  }
+  }
+
+}
+
 /* Temperature Sensor */
 	  if (flagTemp==1){
 		  flagTemp=0;
@@ -279,35 +311,7 @@ int main(void)
 		 	  }
 	  }
 
-/*   Clock     */
-if(flagClock==1){
-	  flagClock=0;
 
-	  sec++;
-	  if(sec==60){
-		  sec=0;
-		  min++;
-	  }
-
-	  BSP_LCD_SetFont(&Font16);
-	  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
-	  sprintf(clockTime, "Time: %2d:%2d", min,sec);
-	  BSP_LCD_DisplayStringAt(650, 400, (uint8_t *)clockTime, LEFT_MODE);
-
-	  //Temporizador de 20 seg
-	  if(gameON ==1 || gameARMon ==1){
-		  downTimer--;
-		  sprintf(timerString, "Time Left: %2d s", downTimer);
-		  BSP_LCD_DisplayStringAt(550, 300, (uint8_t *)timerString, LEFT_MODE);
-
-		  if (downTimer <= 0){
-			turnFlag=1;
-			timOutFlag=1;
-
-		  }
-	  }
-
-}
 
 
 /*Touch Screen*/
@@ -1256,7 +1260,6 @@ void playARM(){
 		  	 }
 
 		  	 if(timOutP1 == 3){
-		  		BSP_LCD_DisplayStringAt(570, 118, (uint8_t *)"PLAYER 1 LOOSES" , LEFT_MODE);
 		  		gameARMon = 0;
 		  		gameEnd=1;
 		  	 }
@@ -1290,6 +1293,8 @@ void playARM(){
 		  	BSP_LCD_SetTextColor(colorP2);
 		  	 BSP_LCD_DisplayStringAt(590, 250, (uint8_t *)"   ARM   ", LEFT_MODE);
 
+		  	 HAL_Delay(850);  //Delay p q se consiga ler a mensagem "ARM"
+
 		  	symbPlayer='o';
 		    symbAdv='x';
 		    colorPlayer=colorP2;
@@ -1305,7 +1310,6 @@ void playARM(){
 		    }
 
 		    if(timOutP2 == 3){
-		  		BSP_LCD_DisplayStringAt(570, 118, (uint8_t *)"ARM LOOSES" , LEFT_MODE);
 		  		gameARMon = 0;
 		  		gameEnd=1;
 		    }
@@ -1328,7 +1332,7 @@ void playARM(){
 
 		    srand(time(NULL));
 
-		    int random_number = rand() %20;
+		    int random_number = rand() %3;     //so escolhe entre as 3 primeiras posicoes p garantir q n escolhe uma posicao vazia do array
 
 		    casaX = jogPossiveisX[random_number];
 		    casaY = jogPossiveisY[random_number];
@@ -1339,9 +1343,7 @@ void playARM(){
 
 
 
-
-
-   if(turnFlag==1){
+   if(turnFlag==1 ){
 		 turnFlag=0;
 		   newPlayer++;
        }
