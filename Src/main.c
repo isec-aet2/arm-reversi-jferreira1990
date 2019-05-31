@@ -201,7 +201,8 @@ int main(void)
   
 
   /* Enable I-Cache---------------------------------------------------------*/
-  SCB_EnableICache();
+
+	SCB_EnableICache();
 
   /* Enable D-Cache---------------------------------------------------------*/
   SCB_EnableDCache();
@@ -354,6 +355,7 @@ if(flagClock==1){
 		  startSoft=0;
 		  startARMSoft=0;
 		  newPlayer=0;
+		  flagTemp=0;
 
 		  //volta a escrever a matriz
 		        for (int i=0;i<8;i++){
@@ -1260,6 +1262,17 @@ void playARM(){
 		  	 }
 
 		  	 //--Jogada do Player-----------------------------------------------------------
+		  	 //------verificar se ha jogadas possiveis------------------------------------------------------------------
+
+					  jogadasPossiveis(symbPlayer, symbAdv);
+
+					  /*se n houver jogadas possiveis a segunda posiçao da matriz (jogPosssiveis[1]) vai estar igual a zero*/
+					  /*e preciso verificar a segunda posiçao e nao a primeira pq (0,0) e uma jogada possivel              */
+
+					  if( jogPossiveisX[1]==jogPossiveisY[1]  && jogPossiveisX[1]==0  ){
+						  gameON = 0;
+						  gameEnd = 1;
+					  }
 
 		  	 casaX = (int)TS_State.touchX[0]/60;
 		  	 casaY = (int)TS_State.touchY[0]/60;
@@ -1299,6 +1312,18 @@ void playARM(){
 
 		    //--Jogada do ARM---------------------------
 
+		    //------verificar se ha jogadas possiveis------------------------------------------------------------------
+
+		    	  jogadasPossiveis(symbPlayer, symbAdv);
+
+		    	  /*se n houver jogadas possiveis a segunda posiçao da matriz (jogPosssiveis[1]) vai estar igual a zero*/
+		    	  /*e preciso verificar a segunda posiçao e nao a primeira pq (0,0) e uma jogada possivel              */
+
+		    	  if( jogPossiveisX[1]==jogPossiveisY[1]  && jogPossiveisX[1]==0  ){
+		    		  gameON = 0;
+		    		  gameEnd = 1;
+		    	  }
+
 		    jogadasPossiveis(symbPlayer, symbAdv);
 
 		    srand(time(NULL));
@@ -1327,14 +1352,16 @@ void jogadasPossiveis(char symbPlayer, char symbAdv){
 
 
 	//reinicia as matrizes de jogadas possiveis
-	for(int i=0; i<=20; i++){
+	for(int i=0; i<21; i++){
 		jogPossiveisX[i]=0;
-		jogPossiveisX[i]=jogPossiveisY[i];
+		jogPossiveisY[i]=jogPossiveisX[i];
 	}
 
-	for(casaX=0; casaX<=7; casaX++){
 
-			for(casaY=0; casaY<=7; casaY++){
+	for(casaX=0; casaX<8; casaX++){
+
+			casaY=0;
+			while(casaY<8){
 
 				//verificar q a casa está vazia
 				if(board[casaY][casaX] == '.'  ){
@@ -1367,7 +1394,8 @@ void jogadasPossiveis(char symbPlayer, char symbAdv){
 							indx++;
 						}
 
-			}
+			  }
+		 casaY++;
 		}
 	   }
 
