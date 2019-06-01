@@ -1538,9 +1538,80 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 
 							 //troca as peças
 							 k=i;
-							// l=j;
-
 							 for (int i = casaY, j=casaX ; i>k ; i--,j--){
+								 board[i][j]= symbPlayer;
+								 BSP_LCD_FillCircle((i*60+30), (j*60+30)  ,25);
+
+							 }
+
+						  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+						  board[casaY][casaX]=symbPlayer;
+						  }
+					  }
+				  }
+      /*
+				  //---diagonal Norte-direita
+
+				  else if( board[casaY-1][casaX+1]==symbAdv ){
+
+					  //procura uma peça do jogador p "entalar"
+					  for (int i = casaY, j=casaX ; i>0 ; i--,j++){
+						 if( board [i][j] == symbPlayer){
+
+							 //troca as peças
+							 k=i;
+							 l=j;
+
+							 for (int i = casaY, j=casaX ; i>k, j<l ; i--,j++){
+								 board[i][j]= symbPlayer;
+								 BSP_LCD_FillCircle((i*60+30), (j*60+30)  ,25);
+
+							 }
+
+						  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+						  board[casaY][casaX]=symbPlayer;
+						  }
+					  }
+				  }
+
+				  //---diagonal Sul-esquerda
+
+				  if( board[casaY+1][casaX-1]==symbAdv ){
+
+					  //procura uma peça do jogador p "entalar"
+					  for (int i = casaY, j=casaX ; i>0 ; i++,j--){
+						 if( board [i][j] == symbPlayer){
+
+							 //troca as peças
+							 k=i;
+							 l=j;
+
+							 for (int i = casaY, j=casaX ; i<k, j>l ; i++,j--){
+								 board[i][j]= symbPlayer;
+								 BSP_LCD_FillCircle((i*60+30), (j*60+30)  ,25);
+
+							 }
+
+						  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+						  board[casaY][casaX]=symbPlayer;
+						  }
+					  }
+				  }
+
+				  */
+
+				  //---diagonal Sul-direita
+
+				  else if( board[casaY+1][casaX+1]==symbAdv ){
+
+					  //procura uma peça do jogador p "entalar"
+					  for (int i = casaY, j=casaX ; i<8 ; i++,j++){
+						 if( board [i][j] == symbPlayer){
+
+							 //troca as peças
+							 k=i;
+
+							 for (int i = casaY, j=casaX ; i<k ; i++,j++){
 								 board[i][j]= symbPlayer;
 								 BSP_LCD_FillCircle((i*60+30), (j*60+30)  ,25);
 
