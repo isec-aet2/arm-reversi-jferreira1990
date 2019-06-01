@@ -1384,28 +1384,43 @@ void jogadasPossiveis(char symbPlayer, char symbAdv){
 						//verifica linha-----------------------------------------------------------------------------
 
 						 if( board[casaY+1][casaX]==symbAdv ){
-							 jogPossiveisX[indx]=casaX;
-							 jogPossiveisY[indx]=casaY;
-							 indx++;
+							 for (int i = casaY ; i<8 ; i++){
+							   if( board [i][casaX] == symbPlayer){
+									 jogPossiveisX[indx]=casaX;
+									 jogPossiveisY[indx]=casaY;
+									 indx++;
+							   }
+							 }
 						}
 						else if(board[casaY-1][casaX]==symbAdv ){
-
-							  jogPossiveisX[indx]=casaX;
-							  jogPossiveisY[indx]=casaY;
-							  indx++;
+							for (int i = casaY ; i>0 ; i--){
+								if( board [i][casaX] == symbPlayer){
+									  jogPossiveisX[indx]=casaX;
+									  jogPossiveisY[indx]=casaY;
+									  indx++;
+								}
+							}
 						}
 
 					//verfica coluna-----------------------------------------------------------------------
 
 						if( board[casaY][casaX+1] == symbAdv ){
-							  jogPossiveisX[indx]=casaX;
-							  jogPossiveisY[indx]=casaY;
-								 indx++;
+							for (int i = casaX ; i<8 ; i++){
+							  if( board [casaY][i] == symbPlayer){
+									  jogPossiveisX[indx]=casaX;
+									  jogPossiveisY[indx]=casaY;
+									  indx++;
+							  }
+							}
 						 }
 						else if(  board[casaY][casaX-1]==symbAdv ){
-							jogPossiveisX[indx]=casaX;
-							jogPossiveisY[indx]=casaY;
-							indx++;
+							for (int i = casaX ; i>0 ; i--){
+								if( board [casaY][i] == symbPlayer){
+									jogPossiveisX[indx]=casaX;
+									jogPossiveisY[indx]=casaY;
+									indx++;
+								}
+							}
 						}
 
 			  }
