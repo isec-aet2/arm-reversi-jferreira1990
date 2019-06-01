@@ -125,6 +125,8 @@ int timOutP1=0;
 int timOutP2=0;
 
 int j=0;
+int k=0;
+int l=0;
 
 int jogPossiveisX[20]={0};
 int jogPossiveisY[20]={0};
@@ -1524,6 +1526,34 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 				  				 }
 
 					  }
+
+				  //verfica diagonal-----------------------------------------------------------------------
+				  //---diagonal Norte-esquerda
+
+				  if( board[casaY-1][casaX-1]==symbAdv ){
+
+					  //procura uma peça do jogador p "entalar"
+					  for (int i = casaY, j=casaX ; i>0 ; i--,j--){
+						 if( board [i][j] == symbPlayer){
+
+							 //troca as peças
+							 k=i;
+							// l=j;
+
+							 for (int i = casaY, j=casaX ; i>k ; i--,j--){
+								 board[i][j]= symbPlayer;
+								 BSP_LCD_FillCircle((i*60+30), (j*60+30)  ,25);
+
+							 }
+
+						  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+						  board[casaY][casaX]=symbPlayer;
+						  }
+					  }
+				  }
+
+
+
 
 
 
