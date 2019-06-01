@@ -153,6 +153,8 @@ void gameOver();
 
 void playARM();
 
+void playHuman();
+
 void jogadasPossiveis(char symbPlayer, char symbAdv);
 
 void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int casaY);
@@ -390,93 +392,7 @@ if(startFlag==1 ){
 
 if (gameON==1){
 
-//Player1
-
-	  if(newPlayer%2 == 0){
-
-	  	 BSP_LCD_SetTextColor(colorP1);
-	  	 BSP_LCD_DisplayStringAt(590, 250, (uint8_t *)"PLAYER 1", LEFT_MODE);
-
-	  	 symbPlayer='x';
-	  	 symbAdv='o';
-	  	 colorPlayer=colorP1;
-
-
-	  	 if(turnFlag==1){
-	  		 downTimer=20;
-	  	 }
-
-	  	 if(timOutFlag == 1){
-	  		timOutFlag=0;
-	  		timOutP1++;
-
-	  		sprintf(timeOutString, "Timeout P1: %d", timOutP1);
-	  		BSP_LCD_DisplayStringAt(550, 320, (uint8_t *)timeOutString, LEFT_MODE);
-
-	  	 }
-
-	  	 if(timOutP1 == 3){
-	  		gameON = 0;
-	  		gameEnd=1;
-	  	 }
-
-
-	    }
-
-//Player2
-
-	 else{
-
-	  	BSP_LCD_SetTextColor(colorP2);
-	  	 BSP_LCD_DisplayStringAt(590, 250, (uint8_t *)"PLAYER 2", LEFT_MODE);
-
-	  	symbPlayer='o';
-	    symbAdv='x';
-	    colorPlayer=colorP2;
-
-	    if(turnFlag==1){
-	    	downTimer=20;
-	    }
-
-	    if(timOutFlag == 1){
-	       timOutFlag=0;
-    		timOutP2++;
-
-    		sprintf(timeOutString, "Timeout P2: %d", timOutP2);
-    		BSP_LCD_DisplayStringAt(550, 340, (uint8_t *)timeOutString, LEFT_MODE);
-	    }
-
-	    if(timOutP2 == 3){
-	  		gameON = 0;
-	  		gameEnd = 1;
-	    }
-
-	   }
-
-//------verificar se ha jogadas possiveis------------------------------------------------------------------
-
-	  jogadasPossiveis(symbPlayer, symbAdv);
-
-	  /*se n houver jogadas possiveis a segunda posiçao da matriz (jogPosssiveis[1]) vai estar igual a zero*/
-	  /*e preciso verificar a segunda posiçao e nao a primeira pq (0,0) e uma jogada possivel              */
-
-	  if( jogPossiveisX[1]==jogPossiveisY[1]  && jogPossiveisX[1]==0  ){
-		  gameON = 0;
-		  gameEnd = 1;
-	  }
-
-//----colocar as peças-------------------------------------------------------------------------------------
-
-	  casaX = (int)TS_State.touchX[0]/60;
-	  casaY = (int)TS_State.touchY[0]/60;
-
-	  jogada(symbPlayer, symbAdv, colorPlayer, casaX, casaY);
-
-//----mudar a vez-------------------------------------------------------------------------------------------
-	  if(turnFlag==1){
-	  		turnFlag=0;
-	  	   newPlayer++;
-	  	}
+	playHuman();
 
 }
 
@@ -1352,6 +1268,100 @@ void playARM(){
        }
 
 }
+
+void playHuman(){
+
+
+	//Player1
+
+		  if(newPlayer%2 == 0){
+
+		  	 BSP_LCD_SetTextColor(colorP1);
+		  	 BSP_LCD_DisplayStringAt(590, 250, (uint8_t *)"PLAYER 1", LEFT_MODE);
+
+		  	 symbPlayer='x';
+		  	 symbAdv='o';
+		  	 colorPlayer=colorP1;
+
+
+		  	 if(turnFlag==1){
+		  		 downTimer=20;
+		  	 }
+
+		  	 if(timOutFlag == 1){
+		  		timOutFlag=0;
+		  		timOutP1++;
+
+		  		sprintf(timeOutString, "Timeout P1: %d", timOutP1);
+		  		BSP_LCD_DisplayStringAt(550, 320, (uint8_t *)timeOutString, LEFT_MODE);
+
+		  	 }
+
+		  	 if(timOutP1 == 3){
+		  		gameON = 0;
+		  		gameEnd=1;
+		  	 }
+
+
+		    }
+
+	//Player2
+
+		 else{
+
+				BSP_LCD_SetTextColor(colorP2);
+				 BSP_LCD_DisplayStringAt(590, 250, (uint8_t *)"PLAYER 2", LEFT_MODE);
+
+				symbPlayer='o';
+				symbAdv='x';
+				colorPlayer=colorP2;
+
+				if(turnFlag==1){
+					downTimer=20;
+				}
+
+				if(timOutFlag == 1){
+				   timOutFlag=0;
+					timOutP2++;
+
+					sprintf(timeOutString, "Timeout P2: %d", timOutP2);
+					BSP_LCD_DisplayStringAt(550, 340, (uint8_t *)timeOutString, LEFT_MODE);
+				}
+
+				if(timOutP2 == 3){
+					gameON = 0;
+					gameEnd = 1;
+				}
+
+		   }
+
+	//------verificar se ha jogadas possiveis------------------------------------------------------------------
+
+		  jogadasPossiveis(symbPlayer, symbAdv);
+
+		  /*se n houver jogadas possiveis a segunda posiçao da matriz (jogPosssiveis[1]) vai estar igual a zero*/
+		  /*e preciso verificar a segunda posiçao e nao a primeira pq (0,0) e uma jogada possivel              */
+
+		  if( jogPossiveisX[1]==jogPossiveisY[1]  && jogPossiveisX[1]==0  ){
+			  gameON = 0;
+			  gameEnd = 1;
+		  }
+
+	//----colocar as peças-------------------------------------------------------------------------------------
+
+		  casaX = (int)TS_State.touchX[0]/60;
+		  casaY = (int)TS_State.touchY[0]/60;
+
+		  jogada(symbPlayer, symbAdv, colorPlayer, casaX, casaY);
+
+	//----mudar a vez-------------------------------------------------------------------------------------------
+		  if(turnFlag==1){
+		  		turnFlag=0;
+		  	    newPlayer++;
+		  	}
+
+}
+
 
 void jogadasPossiveis(char symbPlayer, char symbAdv){
 
