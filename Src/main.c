@@ -1247,7 +1247,6 @@ void playARM(){
 		    		  gameEnd = 1;
 		    	  }
 
-		    jogadasPossiveis(symbPlayer, symbAdv);
 
 		    srand(time(NULL));
 
@@ -1432,11 +1431,6 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 
 				  if( board[casaY+1][casaX]==symbAdv ){
 
-
-					  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
-
-					  board[casaY][casaX]=symbPlayer;
-
 					  //troca as peças
 					  for (int i = casaY ; i<8 ; i++){
 					  	 if( board [i][casaX] == symbPlayer){
@@ -1446,6 +1440,8 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 
 					  			  BSP_LCD_FillCircle(jogadaX,  (i*60+30)  ,25);
 					  			  }
+					  		  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+					  		  board[casaY][casaX]=symbPlayer;
 					  		  }
 					  }
 
@@ -1453,10 +1449,6 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 
 				  }
 				  else if(board[casaY-1][casaX]==symbAdv ){
-
-				  				  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
-
-				  				  board[casaY][casaX]=symbPlayer;
 
 				  				 //troca as peças
 				  				for (int i = casaY ; i>0 ; i--){
@@ -1468,6 +1460,9 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 				  						  BSP_LCD_FillCircle(jogadaX,  (i*60+30)  ,25);
 
 				  						  }
+
+				  						BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+				  						board[casaY][casaX]=symbPlayer;
 				  					  }
 				  				 }
 
@@ -1478,10 +1473,6 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 
 				  if( board[casaY][casaX+1] == symbAdv ){
 
-					  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
-
-					board[casaY][casaX]=symbPlayer;
-
 					  //troca as peças
 					 for (int i = casaX ; i<8 ; i++){
 						 if( board [casaY][i] == symbPlayer){
@@ -1491,6 +1482,9 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 
 							BSP_LCD_FillCircle((i*60+30),  jogadaY  ,25);
 							}
+
+						  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+						  board[casaY][casaX]=symbPlayer;
 						  }
 			        }
 
@@ -1498,10 +1492,6 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 
 				  }
 				  else if(  board[casaY][casaX-1]==symbAdv ){
-
-				  				 BSP_LCD_FillCircle(jogadaX,jogadaY,25);
-
-				  				board[casaY][casaX]=symbPlayer;
 
 				  				//troca as peças
 				  				for (int i = casaX ; i>0 ; i--){
@@ -1514,9 +1504,9 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 
 				  						 }
 				  					 }
+				  				  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
+				  				  board[casaY][casaX]=symbPlayer;
 				  				 }
-
-
 
 					  }
 

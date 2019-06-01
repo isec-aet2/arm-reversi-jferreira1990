@@ -17,7 +17,7 @@ main.c:959:13:LCD_Config	32	static
 main.c:1023:13:startGame	32	static
 main.c:1068:6:gameOver	80	static
 main.c:1157:6:playARM	32	static
-main.c:1272:6:playHuman	24	static
-main.c:1366:6:jogadasPossiveis	24	static
-main.c:1419:6:jogada	56	static
-main.c:1536:6:Error_Handler	8	static
+main.c:1271:6:playHuman	24	static
+main.c:1365:6:jogadasPossiveis	24	static
+main.c:1418:6:jogada	56	static
+main.c:1526:6:Error_Handler	8	static
