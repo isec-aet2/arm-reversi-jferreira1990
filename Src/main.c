@@ -104,31 +104,31 @@ char board[8][8]={"........",
 char symbPlayer;
 char symbAdv;
 
-	int newPlayer=0;
-	int gameON=0;
-	int gameARMon=0;
-	int gameEnd=0;
-	int firstMove=0;
+int newPlayer=0;
+int gameON=0;
+int gameARMon=0;
+int gameEnd=0;
+int firstMove=0;
 
-	uint16_t casaX=0;
-	uint16_t casaY=0;
-	uint16_t jogadaX=0;
-	uint16_t jogadaY=0;
+uint16_t casaX=0;
+uint16_t casaY=0;
+uint16_t jogadaX=0;
+uint16_t jogadaY=0;
 
-	uint32_t colorP1 =  LCD_COLOR_LIGHTGREEN ;
-	uint32_t colorP2 =  LCD_COLOR_LIGHTRED ;
-	uint32_t colorPlayer;
-	//uint32_t colorAdv;
+uint32_t colorP1 =  LCD_COLOR_LIGHTGREEN ;
+uint32_t colorP2 =  LCD_COLOR_LIGHTRED ;
+uint32_t colorPlayer;
+//uint32_t colorAdv;
 
-	int timOutFlag=0;
-	int timOutP1=0;
-	int timOutP2=0;
+int timOutFlag=0;
+int timOutP1=0;
+int timOutP2=0;
 
-	int j=0;
+int j=0;
 
-	int jogPossiveisX[20]={0};
-	int jogPossiveisY[20]={0};
-	int indx=0;
+int jogPossiveisX[20]={0};
+int jogPossiveisY[20]={0};
+int indx=0;
 
 /* USER CODE END PV */
 
@@ -359,9 +359,12 @@ if(flagClock==1){
 		  startSoft=0;
 		  startARMSoft=0;
 		  newPlayer=0;
-		  flagTemp=0;
 
-		  //volta a escrever a matriz
+		  BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
+
+		  downTimer=20;
+
+		 //volta a escrever a matriz inicial
 		        for (int i=0;i<8;i++){
 		                    for (int j=0;j<8;j++){
 		                   board[i][j]='.';
@@ -1273,7 +1276,7 @@ void playARM(){
 					  /*e preciso verificar a segunda posiçao e nao a primeira pq (0,0) e uma jogada possivel              */
 
 					  if( jogPossiveisX[1]==jogPossiveisY[1]  && jogPossiveisX[1]==0  ){
-						  gameON = 0;
+						  gameARMon = 0;
 						  gameEnd = 1;
 					  }
 
@@ -1324,7 +1327,7 @@ void playARM(){
 		    	  /*e preciso verificar a segunda posiçao e nao a primeira pq (0,0) e uma jogada possivel              */
 
 		    	  if( jogPossiveisX[1]==jogPossiveisY[1]  && jogPossiveisX[1]==0  ){
-		    		  gameON = 0;
+		    		  gameARMon = 0;
 		    		  gameEnd = 1;
 		    	  }
 
@@ -1332,7 +1335,7 @@ void playARM(){
 
 		    srand(time(NULL));
 
-		    int random_number = rand() %3;     //so escolhe entre as 3 primeiras posicoes p garantir q n escolhe uma posicao vazia do array
+		    int random_number = rand() %indx;
 
 		    casaX = jogPossiveisX[random_number];
 		    casaY = jogPossiveisY[random_number];
@@ -1359,7 +1362,7 @@ void jogadasPossiveis(char symbPlayer, char symbAdv){
 		jogPossiveisY[i]=jogPossiveisX[i];
 	}
 
-
+    indx=0;
 	for(casaX=0; casaX<8; casaX++){
 
 			casaY=0;
