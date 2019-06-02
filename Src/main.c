@@ -85,6 +85,7 @@ int startARMSoft=0;
 
 int sec=0;
 int min=0;
+int hour=0;
 
 int turnFlag=0;
 int startFlag=0;
@@ -275,10 +276,17 @@ if(flagClock==1){
 	  min++;
   }
 
+  if(min==60){
+	  min=0;
+	  hour++;
+  }
+
+
   BSP_LCD_SetFont(&Font16);
   BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
-  sprintf(clockTime, "Time: %2d:%2d", min,sec);
-  BSP_LCD_DisplayStringAt(650, 400, (uint8_t *)clockTime, LEFT_MODE);
+  BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
+  sprintf(clockTime, "Time: %2d:%2d:%2d", hour,min,sec);
+  BSP_LCD_DisplayStringAt(600, 400, (uint8_t *)clockTime, LEFT_MODE);
 
   //Temporizador de 20 seg
   if(gameON ==1 || gameARMon ==1){
@@ -311,7 +319,7 @@ if(flagClock==1){
 		 		  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
 		 		  BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
 		 		  BSP_LCD_SetFont(&Font16);
-		 		  BSP_LCD_DisplayStringAt(650, 435, (uint8_t *)desc, LEFT_MODE);
+		 		  BSP_LCD_DisplayStringAt(600, 435, (uint8_t *)desc, LEFT_MODE);
 		 	  }
 	  }
 
@@ -1178,12 +1186,16 @@ void playARM(){
 		  	 if(timOutFlag == 1){
 		  		timOutFlag=0;
 		  		timOutP1++;
+
+		  		sprintf(timeOutString, "Timeout P1: %d", timOutP1);
+		  		BSP_LCD_DisplayStringAt(550, 320, (uint8_t *)timeOutString, LEFT_MODE);
 		  	 }
 
 		  	 if(timOutP1 == 3){
 		  		gameARMon = 0;
 		  		gameEnd=1;
 		  	 }
+
 
 		  	 //--Jogada do Player-----------------------------------------------------------
 		  	 //------verificar se ha jogadas possiveis------------------------------------------------------------------
@@ -1349,9 +1361,14 @@ void playHuman(){
 		  }
 
 	//----colocar as peças-------------------------------------------------------------------------------------
+		  /*para prevenir q o jogador jogue numa casa q e invalida para si mas valida p o jogador seguinte*/
+		  /*casa X e casaY so tem valores se tiver sido carregado no ecra*/
 
-		  casaX = (int)TS_State.touchX[0]/60;
-		  casaY = (int)TS_State.touchY[0]/60;
+		  if(turnFlag==1){
+			  casaX = (int)TS_State.touchX[0]/60;
+			  casaY = (int)TS_State.touchY[0]/60;
+		  }
+
 
 		  jogada(symbPlayer, symbAdv, colorPlayer, casaX, casaY);
 
@@ -1359,6 +1376,8 @@ void playHuman(){
 		  if(turnFlag==1){
 		  		turnFlag=0;
 		  	    newPlayer++;
+
+
 		  	}
 
 }
@@ -1425,7 +1444,55 @@ void jogadasPossiveis(char symbPlayer, char symbAdv){
 							}
 						}
 
+					//verfica diagonal-----------------------------------------------------------------------
+					//---diagonal Norte-esquerda
+
+						  if( board[casaY-1][casaX-1]==symbAdv ){
+							  for (int i = casaY, j=casaX ; i>0 ; i--,j--){
+								 if( board [i][j] == symbPlayer){
+									 jogPossiveisX[indx]=casaX;
+									jogPossiveisY[indx]=casaY;
+									indx++;
+								  }
+							  }
+						  }
+
+					//---diagonal Norte-direita
+						  else if( board[casaY-1][casaX+1]==symbAdv ){
+							  for (int i = casaY, j=casaX ; i>0 ; i--,j++){
+								 if( board [i][j] == symbPlayer){
+									 jogPossiveisX[indx]=casaX;
+									jogPossiveisY[indx]=casaY;
+									indx++;
+								  }
+							  }
+						  }
+
+				  //---diagonal Sul-esquerda
+
+						  if( board[casaY+1][casaX-1]==symbAdv ){
+							  for (int i = casaY, j=casaX ; i<8 ; i++,j--){
+								 if( board [i][j] == symbPlayer){
+									 jogPossiveisX[indx]=casaX;
+									jogPossiveisY[indx]=casaY;
+									indx++;
+								  }
+							  }
+						  }
+
+				  //---diagonal Sul-direita
+
+				  else if( board[casaY+1][casaX+1]==symbAdv ){
+					  for (int i = casaY, j=casaX ; i<8 ; i++,j++){
+						 if( board [i][j] == symbPlayer){
+							 jogPossiveisX[indx]=casaX;
+							jogPossiveisY[indx]=casaY;
+							indx++;
+						 }
+					  }
+				  }
 			  }
+
 		 casaY++;
 		}
 	   }
@@ -1461,8 +1528,6 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 					  		  board[casaY][casaX]=symbPlayer;
 					  		  }
 					  }
-
-
 
 				  }
 				  else if(board[casaY-1][casaX]==symbAdv ){
@@ -1540,8 +1605,7 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 							 k=i;
 							 for (int i = casaY, j=casaX ; i>k ; i--,j--){
 								 board[i][j]= symbPlayer;
-								 BSP_LCD_FillCircle((i*60+30), (j*60+30)  ,25);
-
+								 BSP_LCD_FillCircle((j*60+30), (i*60+30)  ,25);
 							 }
 
 						  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
@@ -1610,7 +1674,7 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 
 							 for (int i = casaY, j=casaX ; i<k ; i++,j++){
 								 board[i][j]= symbPlayer;
-								 BSP_LCD_FillCircle((i*60+30), (j*60+30)  ,25);
+								 BSP_LCD_FillCircle((j*60+30), (i*60+30)  ,25);
 
 							 }
 
@@ -1619,11 +1683,6 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 						  }
 					  }
 				  }
-
-
-
-
-
 
 		}
 
