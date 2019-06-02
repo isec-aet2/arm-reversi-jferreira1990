@@ -1168,7 +1168,8 @@ void playARM(){
 
 //Player1
 
-		  if(newPlayer%2 == 0){
+
+	if(newPlayer%2 == 0){
 
 
 		  	 BSP_LCD_SetTextColor(colorP1);
@@ -1231,7 +1232,6 @@ void playARM(){
 		  	symbPlayer='o';
 		    symbAdv='x';
 		    colorPlayer=colorP2;
-		    //colorAdv=colorP1;
 
 		    if(turnFlag==1){
 		    	downTimer=20;
@@ -1616,7 +1616,7 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 
 				  //---diagonal Norte-direita
 
-				  else if( board[casaY-1][casaX+1]==symbAdv ){
+				 if( board[casaY-1][casaX+1]==symbAdv ){
 
 					  //procura uma peça do jogador p "entalar"
 					  for (int i = casaY, j=casaX ; i>0 ; i--,j++){
@@ -1663,7 +1663,7 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 
 				  //---diagonal Sul-direita
 
-				  else if( board[casaY+1][casaX+1]==symbAdv ){
+				  if( board[casaY+1][casaX+1]==symbAdv ){
 
 					  //procura uma peça do jogador p "entalar"
 					  for (int i = casaY, j=casaX ; i<8 ; i++,j++){
