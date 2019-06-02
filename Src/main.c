@@ -1549,7 +1549,7 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 						  }
 					  }
 				  }
-      /*
+
 				  //---diagonal Norte-direita
 
 				  else if( board[casaY-1][casaX+1]==symbAdv ){
@@ -1559,17 +1559,15 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 						 if( board [i][j] == symbPlayer){
 
 							 //troca as peças
-							 k=i;
-							 l=j;
 
-							 for (int i = casaY, j=casaX ; i>k, j<l ; i--,j++){
-								 board[i][j]= symbPlayer;
-								 BSP_LCD_FillCircle((i*60+30), (j*60+30)  ,25);
+							 for (int a = casaY, b=casaX ; a>i ; a--,b++){
+								 board[a][b]= symbPlayer;
+								 BSP_LCD_FillCircle((b*60+30), (a*60+30)  ,25);
 
 							 }
 
-						  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
 						  board[casaY][casaX]=symbPlayer;
+						  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
 						  }
 					  }
 				  }
@@ -1579,18 +1577,17 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 				  if( board[casaY+1][casaX-1]==symbAdv ){
 
 					  //procura uma peça do jogador p "entalar"
-					  for (int i = casaY, j=casaX ; i>0 ; i++,j--){
+					  for (int i = casaY, j=casaX ; i<8 ; i++,j--){
 						 if( board [i][j] == symbPlayer){
 
-							 //troca as peças
-							 k=i;
-							 l=j;
 
-							 for (int i = casaY, j=casaX ; i<k, j>l ; i++,j--){
-								 board[i][j]= symbPlayer;
-								 BSP_LCD_FillCircle((i*60+30), (j*60+30)  ,25);
+							 //troca as peças
+							 for (int a = casaY, b=casaX ; a<i ; a++,b--){
+							 board[a][b]= symbPlayer;
+							 BSP_LCD_FillCircle((b*60+30), (a*60+30)  ,25);
 
 							 }
+
 
 						  BSP_LCD_FillCircle(jogadaX,jogadaY,25);
 						  board[casaY][casaX]=symbPlayer;
@@ -1598,7 +1595,7 @@ void jogada(char symbPlayer, char symbAdv,uint32_t colorPlayer, int casaX, int c
 					  }
 				  }
 
-				  */
+
 
 				  //---diagonal Sul-direita
 

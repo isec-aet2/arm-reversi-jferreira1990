@@ -19,5 +19,5 @@ main.c:1070:6:gameOver	80	static
 main.c:1159:6:playARM	32	static
 main.c:1273:6:playHuman	24	static
 main.c:1367:6:jogadasPossiveis	40	static
-main.c:1435:6:jogada	88	static
-main.c:1642:6:Error_Handler	8	static
+main.c:1435:6:jogada	120	static
+main.c:1639:6:Error_Handler	8	static
