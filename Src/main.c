@@ -174,7 +174,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
 		if(TS_State.touchDetected){
 
-			HAL_Delay(100);
 
 			flagTouchScreen=1;
 	     }
@@ -359,12 +358,31 @@ if(flagClock==1){
 				   }
 	   }
 
+	   //Reset do Relogio
+	   if( (int)TS_State.touchX[0] >500 &&  (int)TS_State.touchX[0] <800 && (int)TS_State.touchY[0] >250 && (int)TS_State.touchY[0] < 400  ){
+		   sec=0;
+		   min=0;
+		   hour=0;
+
+		   	   	   	 BSP_LCD_SetFont(&Font16);
+					 BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+					 BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
+					 sprintf(clockTime, "Time: %2d:%2d:%2d", hour,min,sec);
+					 BSP_LCD_DisplayStringAt(600, 400, (uint8_t *)clockTime, LEFT_MODE);
+
+
+	   }
+
+
+
  }
 
 
 
 /*  PUSH-BUTTON  */
 	  if(BSP_PB_GetState(BUTTON_WAKEUP)==1){
+		 /*
+
 		  LCD_Config();
 		  gameON=0;
 		  gameARMon=0;
@@ -386,6 +404,12 @@ if(flagClock==1){
 		                board[3][4]='o';
 		                board[4][3]='o';
 		                board[4][4]='x';
+
+		   */
+		  HAL_Delay(75);
+		  newPlayer++;
+		  downTimer=20;
+
 	  }
 
 
